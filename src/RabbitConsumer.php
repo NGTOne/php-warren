@@ -50,4 +50,16 @@ class RabbitConsumer
         $this->syncActions[$name] = $action;
         return $this;
     }
+
+    private function processMsg($msg)
+    {
+        $req = $this->conn->convertMessage($msg);
+    }
+
+    public function listen() : void
+    {
+        $this->conn->setCallback(function($msg) {
+            $this->processMsg($msg);
+        });
+    }
 }
