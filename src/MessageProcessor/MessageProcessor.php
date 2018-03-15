@@ -3,6 +3,8 @@
 namespace Warren\MessageProcessor;
 
 use Warren\MiddlewareSet;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 abstract class MessageProcessor
 {
@@ -15,4 +17,12 @@ abstract class MessageProcessor
     }
 
     abstract protected function finalMiddlewareLayer() : callable;
+
+    public function processMessage(
+        RequestInterface $req
+    ) : ResponseInterface {
+        foreach ($this->middlewares as $ware) {
+
+        }
+    }
 }
