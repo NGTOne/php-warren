@@ -5,9 +5,9 @@ namespace Warren;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-interface SynchronousAction
+interface Action
 {
-    public function performSyncAction(
+    public function performAction(
         RequestInterface $msg
     ) : ResponseInterface;
 }
