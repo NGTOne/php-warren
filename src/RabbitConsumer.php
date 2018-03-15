@@ -6,7 +6,8 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
 use Warren\ConnectionInterface;
-use Warren\Action;
+use Warren\AsynchronousAction;
+use Warren\SynchronousAction;
 
 class RabbitConsumer
 {
@@ -36,7 +37,7 @@ class RabbitConsumer
     }
 
     public function addAsynchronousAction(
-        Action $action,
+        AsynchronousAction $action,
         string $name
     ) : RabbitConsumer {
         $this->asyncActions[$name] = $action;
@@ -44,7 +45,7 @@ class RabbitConsumer
     }
 
     public function addSynchronousAction(
-        Action $action,
+        SynchronousAction $action,
         string $name
     ) : RabbitConsumer {
         $this->syncActions[$name] = $action;
