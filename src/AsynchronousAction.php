@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 interface AsynchronousAction
 {
     public function performAsynchronousAction(
-        RequestInterface $msg
+        RequestInterface $req,
+        ResponseInterface $res
     ) : void;
 }

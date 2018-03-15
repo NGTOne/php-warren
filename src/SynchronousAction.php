@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 interface SynchronousAction
 {
     public function performSynchronousAction(
-        RequestInterface $msg
+        RequestInterface $req,
+        ResponseInterface $res
     ) : ResponseInterface;
 }
