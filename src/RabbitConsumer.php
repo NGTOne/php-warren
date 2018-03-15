@@ -15,6 +15,7 @@ class RabbitConsumer
     private $syncActions = [];
 
     private $replyTo = 'reply_to';
+    private $actionHeader = 'action';
 
     public function __construct(ConnectionInterface $conn)
     {
@@ -25,6 +26,12 @@ class RabbitConsumer
     public function setReplyToHeader(string $replyTo) : RabbitConsumer
     {
         $this->replyTo = $replyTo;
+        return $this;
+    }
+
+    public function setActionHeader(string $action) : RabbitConsumer
+    {
+        $this->action = $action;
         return $this;
     }
 
