@@ -8,6 +8,7 @@ use PhpAmqpLib\Message\AMQPMessage;
 use Warren\ConnectionInterface;
 use Warren\AsynchronousAction;
 use Warren\SynchronousAction;
+use Warren\MiddlewareSet;
 
 class RabbitConsumer
 {
@@ -15,8 +16,8 @@ class RabbitConsumer
     private $asyncActions = [];
     private $syncActions = [];
 
-    private $asynchronousMiddlewares[];
-    private $synchronousMiddlewares[];
+    private $asynchronousMiddlewares;
+    private $synchronousMiddlewares;
 
     private $replyTo = 'reply_to';
     private $actionHeader = 'action';
@@ -25,6 +26,9 @@ class RabbitConsumer
     {
         $this->conn = $conn;
         $this->conn->connect();
+
+        $this->asynchronousMiddlewares = new MiddlewareSet;
+        $this->synchronousMiddlewares = new MiddlewareSet;
     }
 
     public function setReplyToHeader(string $replyTo) : RabbitConsumer
@@ -58,14 +62,14 @@ class RabbitConsumer
     public function addSynchronousMiddleware(
         callable $ware
     ) : RabbitConsumer {
-        $this->synchronousMiddlewares[] = $ware;
+        $this->synchronousMiddlewares->addMiddleware($ware);
         return $this;
     }
 
     public function addAsynchronousMiddleware(
         callable $ware
     ) : RabbitConsumer {
-        $this->asynchronousMiddlewares[] = $ware;
+        $this->asynchronousMiddlewares->addMiddleware($ware);
         return $this;
     }
 
