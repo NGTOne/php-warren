@@ -19,7 +19,7 @@ class MiddlewareSet implements \IteratorAggregate
 
     public function clone() : MiddlewareSet
     {
-        return array_reduce($this, function ($set, $ware) {
+        return array_reduce($this->middlewares, function ($set, $ware) {
             return $set->addMiddleware($ware);
         }, new MiddlewareSet);
     }

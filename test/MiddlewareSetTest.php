@@ -14,25 +14,26 @@ class MiddlewareSetTest extends TestCase
     }
 
     /**
-     * @dataProvider addMiddlewareProvider
+     * @dataProvider middlewareProvider
      */
-    public function testAddMiddleware($wares, $expectedCount)
+    public function testAddMiddleware($wares)
     {
         foreach ($wares as $ware) {
-            $this->set->addMiddleware($ware);
+            $result = $this->set->addMiddleware($ware);
+            $this->assertSame($this->set, $result);
         }
 
-        $this->assertCount($expectedCount, $this->set);
+        $this->assertCount(count($wares), $this->set);
     }
 
-    public function addMiddlewareProvider()
+    public function middlewareProvider()
     {
         return [
-            [[], 0],
+            [[]],
             [[function (
                 RequestInterface $req,
                 ResponseInterface $res
-            ) {}], 1],
+            ) {}]],
             [
                 [
                     function (
@@ -43,9 +44,29 @@ class MiddlewareSetTest extends TestCase
                         RequestInterface $req,
                         ResponseInterface $res
                     ) {}
-                ],
-                2
+                ]
             ]
         ];
+    }
+
+    /**
+     * @dataProvider middlewareProvider
+     */
+    public function testClone($wares)
+    {
+        foreach ($wares as $ware) {
+            $this->set->addMiddleware($ware);
+        }
+
+        $result = $this->set->clone();
+        $result->addMiddleware(function (
+            RequestInterface $req,
+            ResponseInterface $res
+        ) {});
+
+        $this->assertCount(count($wares), $this->set);
+        $this->assertCount(count($wares) + 1, $result);
+
+        $this->assertNotSame($this->set, $result);
     }
 }
