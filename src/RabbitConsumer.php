@@ -23,14 +23,16 @@ class RabbitConsumer
     public function addAsynchronousAction(
         Action $action,
         string $name
-    ) {
+    ) : RabbitConsumer {
         $this->asyncActions[$name] = $action;
+        return $this;
     }
 
     public function addSynchronousAction(
         Action $action,
         string $name
-    ) {
+    ) : RabbitConsumer {
         $this->syncActions[$name] = $action;
+        return $this;
     }
 }
