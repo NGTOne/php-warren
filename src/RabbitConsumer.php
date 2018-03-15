@@ -15,6 +15,9 @@ class RabbitConsumer
     private $asyncActions = [];
     private $syncActions = [];
 
+    private $asynchronousMiddlewares[];
+    private $synchronousMiddlewares[];
+
     private $replyTo = 'reply_to';
     private $actionHeader = 'action';
 
@@ -49,6 +52,20 @@ class RabbitConsumer
         string $name
     ) : RabbitConsumer {
         $this->syncActions[$name] = $action;
+        return $this;
+    }
+
+    public function addSynchronousMiddleware(
+        callable $ware
+    ) : RabbitConsumer {
+        $this->synchronousMiddlewares[] = $ware;
+        return $this;
+    }
+
+    public function addAsynchronousMiddleware(
+        callable $ware
+    ) : RabbitConsumer {
+        $this->asynchronousMiddlewares[] = $ware;
         return $this;
     }
 
