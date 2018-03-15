@@ -4,15 +4,23 @@ namespace Warren;
 
 class MiddlewareSet implements \IteratorAggregate
 {
-    private $middlewares;
+    private $middlewares = [];
 
-    public function addMiddleware(callable $ware)
+    public function addMiddleware(callable $ware) : MiddlewareSet
     {
         $this->middlewares[] = $ware;
+        return $this;
     }
 
-    public function getIterator() : Traversable
+    public function getIterator()
     {
-        return new ArrayIterator($this->middlewares);
+        return new \ArrayIterator($this->middlewares);
+    }
+
+    public function clone() : MiddlewareSet
+    {
+        return array_reduce($this, function ($set, $ware) {
+            return $set->addMiddleware($ware);
+        }, new MiddlewareSet);
     }
 }
