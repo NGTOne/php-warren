@@ -14,10 +14,18 @@ class RabbitConsumer
     private $asyncActions = [];
     private $syncActions = [];
 
+    private $replyTo = 'reply_to';
+
     public function __construct(ConnectionInterface $conn)
     {
         $this->conn = $conn;
         $this->conn->connect();
+    }
+
+    public function setReplyToHeader(string $replyTo) : RabbitConsumer
+    {
+        $this->replyTo = $replyTo;
+        return $this;
     }
 
     public function addAsynchronousAction(
