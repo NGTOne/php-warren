@@ -83,5 +83,7 @@ class RabbitConsumer
         $this->conn->setCallback(function($msg) {
             $this->processMsg($msg);
         });
+
+        $this->conn->listen();
     }
 }
