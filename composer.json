@@ -8,7 +8,6 @@
         }
     },
     "require": {
-        "php-amqplib/php-amqplib": "*",
         "psr/http-message": "*",
         "php": ">=7.1.0"
     },
