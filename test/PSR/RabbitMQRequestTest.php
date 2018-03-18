@@ -188,7 +188,7 @@ class RabbitMQRequestTest extends TestCase
             $result = $new;
         }
 
-        $this->assertEquals($headers, $result->getHeaders());
+        $this->assertEquals($expected, $result->getHeaders());
     }
 
     public function withHeaderProvider()
