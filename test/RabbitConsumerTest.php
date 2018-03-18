@@ -188,4 +188,42 @@ class RabbitConsumerTest extends TestCase
             'foo'
         );
     }
+
+    /**
+     * @dataProvider fluentInterfaceProvider
+     */
+    public function testFluentInterface($call, $args)
+    {
+        $conn = new StubConnection([], []);
+        $rabbit = new RabbitConsumer($conn);
+
+        $result = $rabbit->$call(...$args);
+
+        $this->assertSame($rabbit, $result);
+    }
+
+    public function fluentInterfaceProvider()
+    {
+        return [
+            [
+                'setActionHeader',
+                ['f00b4r']
+            ], [
+                'setReplyToHeader',
+                ['f00b4r']
+            ], [
+                'addAsynchronousAction',
+                [new StubAsynchronousAction, 'foo']
+            ], [
+                'addSynchronousAction',
+                [new StubSynchronousAction([], []), 'foo']
+            ], [
+                'addAsynchronousMiddleware',
+                [function ($req, $res) {}]
+            ], [
+                'addSynchronousMiddleware',
+                [function ($req, $res) {}]
+            ]
+        ];
+    }
 }
