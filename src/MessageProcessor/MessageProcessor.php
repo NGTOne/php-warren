@@ -3,6 +3,8 @@
 namespace Warren\MessageProcessor;
 
 use Warren\MiddlewareSet;
+use Warren\PSR\RabbitMQResponse;
+
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -21,8 +23,12 @@ abstract class MessageProcessor
     public function processMessage(
         RequestInterface $req
     ) : ResponseInterface {
-        foreach ($this->middlewares as $ware) {
+        $res = new RabbitMQResponse();
 
+        foreach ($this->middlewares as $ware) {
+            $res = call_user_func($ware, $req, $res);
         }
+
+        return $res;
     }
 }
