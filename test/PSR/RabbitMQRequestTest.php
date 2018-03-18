@@ -42,24 +42,26 @@ class RabbitMQRequestTest extends TestCase
     /**
      * @dataProvider getHeadersProvider
      */
-    public function testGetHeaders($headers)
+    public function testGetHeaders($headers, $expected)
     {
         foreach ($headers as $key => $header) {
             $this->req = $this->req->withHeader($key, $header);
         }
 
-        $this->assertEquals($headers, $this->req->getHeaders());
+        $this->assertEquals($expected, $this->req->getHeaders());
     }
 
     public function getHeadersProvider()
     {
         return [
             [
-                ["foo" => "bar"]
+                ["foo" => "bar"],
+                ["foo" => ["bar"]]
             ], [
-                ["foo" => "bar", "baz" => ["qux", "quux"]]
+                ["foo" => "bar", "baz" => ["qux", "quux"]],
+                ["foo" => ["bar"], "baz" => ["qux", "quux"]]
             ], [
-                []
+                [], []
             ]
         ];
     }
@@ -82,11 +84,11 @@ class RabbitMQRequestTest extends TestCase
             [
                 ["foo" => "bar"],
                 "foo",
-                "bar"
+                ["bar"]
             ], [
                 ["foo" => "bar"],
                 "fOO",
-                "bar"
+                ["bar"]
             ], [
                 ["foo" => ["bar"]],
                 "foo",
@@ -196,19 +198,19 @@ class RabbitMQRequestTest extends TestCase
         return [
             [
                 ["foo" => "bar"],
-                ["foo" => "bar"]
+                ["foo" => ["bar"]]
             ], [
                 ["FOO" => "bar"],
-                ["FOO" => "bar"]
+                ["FOO" => ["bar"]]
             ], [
                 ["foo" => "bar", "FOO" => "baz"],
-                ["FOO" => "baz"]
+                ["FOO" => ["baz"]]
             ], [
                 ["foo" => "bar", "bar" => "baz"],
-                ["foo" => "bar", "bar" => "baz"]
+                ["foo" => ["bar"], "bar" => ["baz"]]
             ], [
                 ["foo" => ["bar", "quux"], "bar" => "baz"],
-                ["foo" => ["bar", "quux"], "bar" => "baz"]
+                ["foo" => ["bar", "quux"], "bar" => ["baz"]]
             ]
         ];
     }
@@ -236,16 +238,16 @@ class RabbitMQRequestTest extends TestCase
                 ["foo" => ["bar"]]
             ], [
                 ["foo" => "bar", "FOO" => "baz"],
-                ["FOO" => ["bar", "baz"]]
+                ["foo" => ["bar", "baz"]]
             ], [
                 ["foo" => "bar", "bar" => "baz"],
                 ["foo" => ["bar"], "bar" => ["baz"]]
             ], [
                 ["foo" => ["bar", "quux"], "FOO" => "baz"],
-                ["FOO" => ["bar", "quux", "baz"]]
+                ["foo" => ["bar", "quux", "baz"]]
             ], [
                 ["foo" => ["bar", "quux"], "FOO" => ["baz", "quuux"]],
-                ["FOO" => ["bar", "quux", "baz", "quuux"]]
+                ["foo" => ["bar", "quux", "baz", "quuux"]]
             ]
         ];
     }
@@ -276,7 +278,7 @@ class RabbitMQRequestTest extends TestCase
             ], [
                 ["foo" => "bar", "bar" => "baz"],
                 "foo",
-                ["bar" => "baz"]
+                ["bar" => ["baz"]]
             ]
         ];
     }
