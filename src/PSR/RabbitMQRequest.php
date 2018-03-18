@@ -30,15 +30,24 @@ class RabbitMQRequest implements RequestInterface
         return $this->headers;
     }
 
+    private function headerVal($name)
+    {
+        return $this->headers[$this->headerNames[strtolower($name)]];
+    }
+
     public function getHeader($name)
     {
-        return isset($this->headerNames[strtolower($name)]) ?
-            $this->headers[$this->headerNames[strtolower($name)]] : [];
+        return $this->hasHeader($name) ? $this->headerVal($name) : [];
     }
 
     public function getHeaderLine($name)
     {
+        if (!$this->hasHeader($name)) {
+            return "";
+        }
 
+        $header = $this->headerVal($name);
+        return is_array($header) ? implode($header, ", ") : $header;
     }
 
     public function hasHeader($name)
