@@ -78,14 +78,15 @@ class PhpAmqpLibConnection implements ConnectionInterface
 
     public function sendMessage(
         ResponseInterface $response,
-        $originalMsg
+        $originalMsg,
+        string $replyTo
     ) : void {
         $newMsg = $this->convertToAMQPMessage($response);
 
         $originalMsg->delivery_info['channel']->basic_publish(
             $newMsg,
             '',
-            $originalMsg->get('reply_to')
+            $replyTo
         );
     }
 }
