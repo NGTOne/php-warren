@@ -2,10 +2,12 @@
 
 namespace Warren\PSR;
 
-use Psr\Http\Message\RequestInterface;
+use GuzzleHttp\Psr7\Request;
 
-class RabbitMQRequest extends RabbitMQMessage implements RequestInterface
+class RabbitMQRequest extends Request
 {
+    use RabbitMQMessageTrait;
+
     public function __construct(
         $headers = [],
         $body = null,
