@@ -28,8 +28,11 @@ just plug it (or them) into Warren using the fluent interface:
 ```php
 // Using the PhpAmqpLib connection adapter - others will be available soon
 $rabbitConn = new AMQPStreamConnection('server', 5672, 'user', 'pass');
+$channel = $rabbitConn->channel();
+$channel->queue_declare('incoming_msg_queue');
+
 $conn = new Warren\Connection\PhpAmqpLibConnection(
-    $rabbitConn->channel(),
+    $channel,
     'incoming_msg_queue'
 );
 
