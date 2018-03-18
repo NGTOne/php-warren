@@ -9,6 +9,7 @@ use Warren\Test\Stub\StubAMQPChannel;
 use Warren\PSR\RabbitMQRequest;
 use Warren\PSR\RabbitMQResponse;
 
+use PhpAmqpLib\Wire\AMQPTable;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class PhpAmqpLibConnectionTest extends TestCase
@@ -113,17 +114,33 @@ class PhpAmqpLibConnectionTest extends TestCase
     {
         return [
             [
-                new AMQPMessage(),
+                new AMQPMessage('', [
+                    'application_headers' => new AMQPTable
+                ]),
                 new RabbitMQRequest([], '')
             ], [
-                new AMQPMessage('f00b4r'),
+                new AMQPMessage('f00b4r', [
+                    'application_headers' => new AMQPTable
+                ]),
                 new RabbitMQRequest([], 'f00b4r')
             ], [
-                new AMQPMessage('', ['reply_to' => 'bar']),
-                new RabbitMQRequest(['reply_to' => 'bar'], '')
+                new AMQPMessage('', [
+                    'application_headers' => new AMQPTable([
+                        'foo' => 'bar'
+                    ])
+                ]),
+                new RabbitMQRequest(['foo' => 'bar'], '')
             ], [
-                new AMQPMessage('f00b4r', ['reply_to' => 'bar']),
-                new RabbitMQRequest(['reply_to' => 'bar'], 'f00b4r')
+                new AMQPMessage('f00b4r', [
+                    'application_headers' => new AMQPTable([
+                        'foo' => 'bar'
+                    ])
+                ]),
+                new RabbitMQRequest(['foo' => 'bar'], 'f00b4r')
+            ], [
+                // Even if the headers are missing, we shouldn't crash
+                new AMQPMessage('f00b4r'),
+                new RabbitMQRequest([], 'f00b4r')
             ]
         ];
     }
@@ -167,25 +184,23 @@ class PhpAmqpLibConnectionTest extends TestCase
             [
                 new RabbitMQResponse(['foo' => 'bar'], 'f00b4r'),
                 'f00b4r',
-                []
-            ], [
-                new RabbitMQResponse(['type' => 'a_serious_message']),
-                '',
-                ['type' => 'a_serious_message']
+                ['application_headers' => new AMQPTable(['foo' => ['bar']])]
             ], [
                 new RabbitMQResponse(),
                 '',
-                []
+                ['application_headers' => new AMQPTable]
             ], [
-                new RabbitMQResponse(['type' => 'msg'], 'f00b4r'),
+                new RabbitMQResponse(['bar' => 'baz'], 'f00b4r'),
                 'f00b4r',
-                ['type' => 'msg']
+                ['application_headers' => new AMQPTable(['bar' => ['baz']])]
             ], [
                 new RabbitMQResponse([
-                    'type' => ['msg', 'something']
+                    'stuff' => ['msg', 'something']
                 ], 'f00b4r'),
                 'f00b4r',
-                ['type' => 'msg, something']
+                ['application_headers' => new AMQPTable([
+                    'stuff' => ['msg', 'something']
+                ])]
             ]
         ];
     }

@@ -44,7 +44,11 @@ class PhpAmqpLibConnection implements ConnectionInterface
 
     public function convertMessage($msg) : RequestInterface
     {
-        $headers = $msg->get('application_headers')->getNativeData();
+        try {
+            $headers = $msg->get('application_headers')->getNativeData();
+        } catch (\OutOfBoundsException $e) {
+            $headers = [];
+        }
 
         return new RabbitMQRequest(
             $headers,
@@ -75,14 +79,10 @@ class PhpAmqpLibConnection implements ConnectionInterface
     private function convertToAMQPMessage(
         ResponseInterface $response
     ) : AMQPMessage {
-        $headerTable = new AMQPTable;
-
-        foreach ($response->getHeaders() as $key => $header) {
-            $headerTable->set($key, implode($header, ", "));
-        }
-
         return new AMQPMessage((string)$response->getBody(), [
-            'application_headers' => $headerTable
+            'application_headers' => new AMQPTable(
+                $response->getHeaders()
+            )
         ]);
     }
 
