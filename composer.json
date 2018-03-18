@@ -18,5 +18,8 @@
         "squizlabs/php_codesniffer": "*",
         "overtrue/phplint": "^1.0",
         "sensiolabs/security-checker": "*"
+    },
+    "suggest": {
+        "phpamqplib/phpamqplib": "To use the PhpAmqpLib connection adapter"
     }
 }
