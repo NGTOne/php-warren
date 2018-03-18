@@ -103,7 +103,7 @@ class RabbitConsumer
     {
         $req = $this->conn->convertMessage($msg);
 
-        $action = $req->getHeaderLine($this->replyTo);
+        $action = $req->getHeaderLine($this->actionHeader);
 
         $proc = $this->getAsyncProcessor($action) ??
             $this->getSyncProcessor($action);
