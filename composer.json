@@ -4,7 +4,8 @@
     "type": "library",
     "autoload": {
         "psr-4": {
-            "Warren\\": "src"
+            "Warren\\": "src",
+            "Warren\\Test\\": "test"
         }
     },
     "require": {
