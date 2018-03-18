@@ -7,13 +7,13 @@ use Psr\Http\Message\ResponseInterface;
 
 interface ConnectionInterface
 {
-    public function connect() : void;
     public function listen() : void;
     public function setCallback(callable $callback) : void;
+    public function acknowledgeMessage($msg) : void;
 
     public function convertMessage($msg) : RequestInterface;
     public function sendMessage(
         ResponseInterface $response,
-        string $target
+        $originalMsg
     ) : void;
 }

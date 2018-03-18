@@ -25,7 +25,6 @@ class RabbitConsumer
     public function __construct(ConnectionInterface $conn)
     {
         $this->conn = $conn;
-        $this->conn->connect();
 
         $this->asynchronousMiddlewares = new MiddlewareSet;
         $this->synchronousMiddlewares = new MiddlewareSet;
