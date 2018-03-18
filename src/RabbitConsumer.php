@@ -10,14 +10,17 @@ use Warren\AsynchronousAction;
 use Warren\SynchronousAction;
 use Warren\MiddlewareSet;
 
+use Warren\MessageProcessor\AsynchronousMessageProcessor;
+use Warren\MessageProcessor\SynchronousMessageProcessor;
+
 class RabbitConsumer
 {
     private $conn;
     private $asyncActions = [];
     private $syncActions = [];
 
-    private $asynchronousMiddlewares;
-    private $synchronousMiddlewares;
+    private $asyncMiddlewares;
+    private $syncMiddlewares;
 
     private $replyTo = 'reply_to';
     private $actionHeader = 'action';
@@ -26,8 +29,8 @@ class RabbitConsumer
     {
         $this->conn = $conn;
 
-        $this->asynchronousMiddlewares = new MiddlewareSet;
-        $this->synchronousMiddlewares = new MiddlewareSet;
+        $this->asyncMiddlewares = new MiddlewareSet;
+        $this->syncMiddlewares = new MiddlewareSet;
     }
 
     public function setReplyToHeader(string $replyTo) : RabbitConsumer
@@ -72,14 +75,45 @@ class RabbitConsumer
         return $this;
     }
 
+    private function getAsyncProcessor(
+        string $action
+    ) : ?AsynchronousMessageProcessor {
+        return array_search(
+            $action,
+            array_keys($this->asyncActions)
+        ) !== false ? new AsynchronousMessageProcessor(
+            $this->asyncMiddlewares,
+            $this->asyncActions[$action]
+        ) : null;
+    }
+
+    private function getSyncProcessor(
+        string $action
+    ) : ?SynchronousMessageProcessor {
+        return array_search(
+            $action,
+            array_keys($this->asyncActions)
+        ) !== false ? new SynchronousMessageProcessor(
+            $this->asyncMiddlewares,
+            $this->asyncActions[$action]
+        ) : null;
+    }
+
     private function processMsg($msg)
     {
         $req = $this->conn->convertMessage($msg);
+
+        $action = $req->getHeaderLine($this->replyTo);
+
+        $proc = $this->getAsyncProcessor($action) ??
+            $this->getSyncProcessor($action);
+
+        $result = $proc->processMessage($req);
     }
 
     public function listen() : void
     {
-        $this->conn->setCallback(function($msg) {
+        $this->conn->setCallback(function ($msg) {
             $this->processMsg($msg);
         });
 
