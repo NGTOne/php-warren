@@ -80,6 +80,18 @@ class RabbitConsumerTest extends TestCase
                 ['foo' => ['bar']],
                 ''
             ], [
+                [function ($req, $res) {
+                    return $res->withBody(
+                        \GuzzleHttp\Psr7\stream_for('f00b4r')
+                    );
+                }],
+                ['action' => 'my_cool_action'],
+                [],
+                ['action' => ['my_cool_action']],
+                '[]',
+                [],
+                'f00b4r'
+            ], [
                 [
                     function ($req, $res) {
                         return $res->withBody(
@@ -172,6 +184,18 @@ class RabbitConsumerTest extends TestCase
                 '[]',
                 ['foo' => ['bar']],
                 ''
+            ], [
+                [function ($req, $res) {
+                    return $res->withBody(
+                        \GuzzleHttp\Psr7\stream_for('f00b4r')
+                    );
+                }],
+                ['action' => 'my_cool_action'],
+                [],
+                ['action' => ['my_cool_action']],
+                '[]',
+                [],
+                'f00b4r'
             ], [
                 [
                     function ($req, $res) {
