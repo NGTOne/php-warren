@@ -114,8 +114,8 @@ class RabbitConsumer
             $action,
             array_keys($this->asyncActions)
         ) !== false ? new SynchronousMessageProcessor(
-            $this->asyncMiddlewares,
-            $this->asyncActions[$action]
+            $this->syncMiddlewares,
+            $this->syncActions[$action]
         ) : null;
     }
 
