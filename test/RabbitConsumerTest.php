@@ -7,6 +7,7 @@ use Warren\Test\Stub\StubConnection;
 use Warren\Test\Stub\StubAsynchronousAction;
 use Warren\Test\Stub\StubSynchronousAction;
 
+use Warren\PSR\RabbitMQResponse;
 use Warren\RabbitConsumer;
 use Warren\Error\UnknownAction;
 use Warren\Error\ActionAlreadyExists;
@@ -99,6 +100,98 @@ class RabbitConsumerTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider syncMessageSuccessProvider
+     */
+    public function testSyncMessageSuccess(
+        $middlewares,
+        $headers,
+        $body,
+        $expectedReqHeaders,
+        $expectedReqBody,
+        $expectedIncomingResHeaders,
+        $expectedIncomingResBody
+    ) {
+        $conn = $this->getMockBuilder(StubConnection::class)
+            ->setMethods(['sendMessage', 'acknowledgeMessage'])
+            ->setConstructorArgs([$body, $headers])
+            ->getMock();
+
+        $conn->expects($this->once())
+            ->method('sendMessage')
+            ->with($this->identicalTo(new RabbitMQResponse(
+                [],
+                'f00b4r'
+            )));
+        $conn->expects($this->once())
+            ->method('acknowledgeMessage')
+            ->with($this->identicalTo(json_encode([
+                'body' => $body,
+                'header' => $headers
+            ])));
+
+        $rabbit = new RabbitConsumer($conn);
+
+        $action = new StubSynchronousAction('f00b4r', []);
+
+        $rabbit->addSynchronousAction($action, 'my_cool_action');
+
+        foreach ($middlewares as $ware) {
+            $rabbit->addSynchronousMiddleware($ware);
+        }
+
+        $rabbit->listen();
+
+        $this->assertEquals($expectedReqHeaders, $action->reqHeaders);
+        $this->assertEquals($expectedReqBody, $action->reqBody);
+        $this->assertEquals(
+            $expectedIncomingResHeaders,
+            $action->resHeaders
+        );
+        $this->assertEquals($expectedIncomingResBody, $action->resBody);
+    }
+
+    public function syncMessageSuccessProvider()
+    {
+        return [
+            [
+                [],
+                ['action' => 'my_cool_action'],
+                [],
+                ['action' => ['my_cool_action']],
+                '[]',
+                [],
+                ''
+            ], [
+                [function ($req, $res) {
+                    return $res->withHeader('foo', 'bar');
+                }],
+                ['action' => 'my_cool_action'],
+                [],
+                ['action' => ['my_cool_action']],
+                '[]',
+                ['foo' => ['bar']],
+                ''
+            ], [
+                [
+                    function ($req, $res) {
+                        return $res->withBody(
+                            \GuzzleHttp\Psr7\stream_for('f00b4r')
+                        );
+                    },
+                    function ($req, $res) {
+                        return $res->withHeader('foo', 'bar');
+                    },
+                ],
+                ['action' => 'my_cool_action'],
+                [],
+                ['action' => ['my_cool_action']],
+                '[]',
+                ['foo' => ['bar']],
+                'f00b4r'
+            ]
+        ];
+    }
     public function testUnknownAction()
     {
         $conn = new StubConnection([], ['action' => 'my_nonexistent_action']);
