@@ -20,7 +20,7 @@ class PhpAmqpLibConnection implements ConnectionInterface
     public function __construct(
         AMQPChannel $channel,
         string $queue,
-        bool $noLocal
+        bool $noLocal = false
     ) {
         $this->channel = $channel;
 
