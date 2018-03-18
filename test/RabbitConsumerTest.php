@@ -76,6 +76,23 @@ class RabbitConsumerTest extends TestCase
                 '[]',
                 ['foo' => ['bar']],
                 ''
+            ], [
+                [
+                    function ($req, $res) {
+                        return $res->withBody(
+                            \GuzzleHttp\Psr7\stream_for('f00b4r')
+                        );
+                    },
+                    function ($req, $res) {
+                        return $res->withHeader('foo', 'bar');
+                    },
+                ],
+                ['action' => 'my_cool_action'],
+                [],
+                ['action' => ['my_cool_action']],
+                '[]',
+                ['foo' => ['bar']],
+                'f00b4r'
             ]
         ];
     }
