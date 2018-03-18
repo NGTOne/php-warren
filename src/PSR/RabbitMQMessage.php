@@ -68,7 +68,19 @@ abstract class RabbitMQMessage implements MessageInterface
 
     public function withAddedHeader($name, $value)
     {
+        $header = $this->getHeader($name);
 
+        if (is_string($header)) {
+            $header = [$header];
+        }
+
+        if (is_array($value)) {
+            $header = array_merge($header, $value);
+        } else {
+            $header[] = $value;
+        }
+
+        return $this->withHeader($name, $header);
     }
 
     public function withoutHeader($name)
