@@ -9,6 +9,7 @@ interface ConnectionInterface
 {
     public function connect() : void;
     public function listen() : void;
+    public function setCallback(callable $callback) : void;
 
     public function convertMessage($msg) : RequestInterface;
     public function sendMessage(
