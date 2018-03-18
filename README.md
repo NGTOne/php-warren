@@ -16,7 +16,8 @@ function(RequestInterface $req, ResponseInterface $res) : ResponseInterface {
     // Magic
 }
 ```
-idiom.
+idiom, with different middleware stacks for synchronous and asynchronous
+calls.
 
 To this end, it provides an abstraction layer over the queue
 implementation, which converts the queue-specific message into a PSR7
