@@ -43,4 +43,36 @@ class PhpAmqpLibConnectionTest extends TestCase
         $this->conn->setCallback($call);
         $this->conn->listen();
     }
+
+    /**
+     * @dataProvider noLocalProvider
+     */
+    public function testNoLocal($noLocal)
+    {
+        $conn = new PhpAmqpLibConnection($this->channel, 'f00b4r', $noLocal);
+
+        $call = function ($msg) {
+            $this->assertTrue(true);
+        };
+
+        $this->channel->expects($this->once())
+            ->method('basic_consume')
+            ->with(
+                'f00b4r',
+                '',
+                $noLocal,
+                false,
+                false,
+                false,
+                $call
+            );
+
+        $conn->setCallback($call);
+        $conn->listen();
+    }
+
+    public function noLocalProvider()
+    {
+        return [[true], [false]];
+    }
 }
