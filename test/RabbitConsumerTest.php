@@ -129,12 +129,23 @@ class RabbitConsumerTest extends TestCase
             ->setConstructorArgs([$body, $headers])
             ->getMock();
 
+        $expectedResHeaders = array_merge($expectedIncomingResHeaders, [
+            'some_header' => ['my_header']
+        ]);
+
         $conn->expects($this->once())
             ->method('sendMessage')
-            ->with($this->identicalTo(new RabbitMQResponse(
-                [],
-                'f00b4r'
-            )));
+            ->with($this->callback(
+                function ($res) use ($expectedResHeaders) {
+                    $this->assertEquals('f00b4r', $res->getBody());
+                    $this->assertEquals(
+                        $expectedResHeaders,
+                        $res->getHeaders()
+                    );
+
+                    return true;
+                }
+            ));
         $conn->expects($this->once())
             ->method('acknowledgeMessage')
             ->with($this->identicalTo(json_encode([
@@ -144,7 +155,9 @@ class RabbitConsumerTest extends TestCase
 
         $rabbit = new RabbitConsumer($conn);
 
-        $action = new StubSynchronousAction('f00b4r', []);
+        $action = new StubSynchronousAction('f00b4r', [
+            'some_header' => 'my_header'
+        ]);
 
         $rabbit->addSynchronousAction($action, 'my_cool_action');
 

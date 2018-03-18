@@ -134,6 +134,10 @@ class RabbitConsumer
 
         $result = $proc->processMessage($req);
 
+        if ($proc instanceof SynchronousMessageProcessor) {
+            $this->conn->sendMessage($result, $msg);
+        }
+
         $this->conn->acknowledgeMessage($msg);
     }
 
