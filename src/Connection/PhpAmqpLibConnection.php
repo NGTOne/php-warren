@@ -7,6 +7,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
+use PhpAmqpLib\Wire\AMQPTable;
 
 use Warren\PSR\RabbitMQRequest;
 
@@ -43,8 +44,10 @@ class PhpAmqpLibConnection implements ConnectionInterface
 
     public function convertMessage($msg) : RequestInterface
     {
+        $headers = $msg->get('application_headers')->getNativeData();
+
         return new RabbitMQRequest(
-            $msg->get_properties(),
+            $headers,
             $msg->getBody()
         );
     }
@@ -72,12 +75,15 @@ class PhpAmqpLibConnection implements ConnectionInterface
     private function convertToAMQPMessage(
         ResponseInterface $response
     ) : AMQPMessage {
-        return new AMQPMessage((string)$response->getBody(), array_map(
-            function ($header) {
-                return implode($header, ", ");
-            },
-            $response->getHeaders()
-        ));
+        $headerTable = new AMQPTable;
+
+        foreach ($response->getHeaders() as $key => $header) {
+            $headerTable->set($key, implode($header, ", "));
+        }
+
+        return new AMQPMessage((string)$response->getBody(), [
+            'application_headers' => $headerTable
+        ]);
     }
 
     public function sendMessage(
