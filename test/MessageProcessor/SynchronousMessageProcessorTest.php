@@ -13,7 +13,20 @@ use Warren\MessageProcessor\SynchronousMessageProcessor;
 
 class SynchronousMessageProcessorTest extends TestCase
 {
-    private $action;
+    public function testMultipleCallsWithSameStack()
+    {
+        $wares = new MiddlewareSet();
+
+        $processor = new SynchronousMessageProcessor(
+            $wares,
+            new StubSynchronousAction('', [])
+        );
+
+        $processor->processMessage(new RabbitMQRequest);
+        $processor->processMessage(new RabbitMQRequest);
+
+        $this->assertCount(0, $wares);
+    }
 
     /**
      * @dataProvider processMessageProvider

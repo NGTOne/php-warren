@@ -20,6 +20,23 @@ class AsynchronousMessageProcessTest extends TestCase
         $this->action = new StubAsynchronousAction();
     }
 
+    // To catch a really stupid bug, related to re-using the same
+    // middleware stack for multiple calls
+    public function testMultipleCallsWithSameStack()
+    {
+        $wares = new MiddlewareSet();
+
+        $processor = new AsynchronousMessageProcessor(
+            $wares,
+            $this->action
+        );
+
+        $processor->processMessage(new RabbitMQRequest);
+        $processor->processMessage(new RabbitMQRequest);
+
+        $this->assertCount(0, $wares);
+    }
+
     /**
      * @dataProvider processMessageProvider
      */

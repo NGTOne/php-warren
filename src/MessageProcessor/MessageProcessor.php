@@ -14,7 +14,7 @@ abstract class MessageProcessor
 
     public function __construct(MiddlewareSet $wares)
     {
-        $this->middlewares = $wares;
+        $this->middlewares = clone $wares;
         $this->middlewares->addMiddleware($this->finalMiddlewareLayer());
     }
 
