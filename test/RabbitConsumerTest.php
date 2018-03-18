@@ -9,6 +9,7 @@ use Warren\Test\Stub\StubSynchronousAction;
 
 use Warren\RabbitConsumer;
 use Warren\Error\UnknownAction;
+use Warren\Error\ActionAlreadyExists;
 
 class RabbitConsumerTest extends TestCase
 {
@@ -110,5 +111,81 @@ class RabbitConsumerTest extends TestCase
         );
 
         $rabbit->listen();
+    }
+
+    public function testaddAsyncWithExistingAsync()
+    {
+        $conn = new StubConnection([], []);
+
+        $rabbit = new RabbitConsumer($conn);
+
+        $rabbit->addAsynchronousAction(new StubAsynchronousAction, 'foo');
+
+        $this->expectException(ActionAlreadyExists::class);
+        $this->expectExceptionMessage(
+            'Action "foo" has already been registered'
+        );
+
+        $rabbit->addAsynchronousAction(new StubAsynchronousAction, 'foo');
+    }
+
+    public function testaddAsyncWithExistingSync()
+    {
+        $conn = new StubConnection([], []);
+
+        $rabbit = new RabbitConsumer($conn);
+
+        $rabbit->addSynchronousAction(
+            new StubSynchronousAction([], []),
+            'foo'
+        );
+
+        $this->expectException(ActionAlreadyExists::class);
+        $this->expectExceptionMessage(
+            'Action "foo" has already been registered'
+        );
+
+        $rabbit->addAsynchronousAction(new StubAsynchronousAction, 'foo');
+    }
+
+    public function testaddSyncWithExistingAsync()
+    {
+        $conn = new StubConnection([], []);
+
+        $rabbit = new RabbitConsumer($conn);
+
+        $rabbit->addAsynchronousAction(new StubAsynchronousAction, 'foo');
+
+        $this->expectException(ActionAlreadyExists::class);
+        $this->expectExceptionMessage(
+            'Action "foo" has already been registered'
+        );
+
+        $rabbit->addSynchronousAction(
+            new StubSynchronousAction([], []),
+            'foo'
+        );
+    }
+
+    public function testaddSyncWithExistingSync()
+    {
+        $conn = new StubConnection([], []);
+
+        $rabbit = new RabbitConsumer($conn);
+
+        $rabbit->addSynchronousAction(
+            new StubSynchronousAction([], []),
+            'foo'
+        );
+
+        $this->expectException(ActionAlreadyExists::class);
+        $this->expectExceptionMessage(
+            'Action "foo" has already been registered'
+        );
+
+        $rabbit->addSynchronousAction(
+            new StubSynchronousAction([], []),
+            'foo'
+        );
     }
 }
