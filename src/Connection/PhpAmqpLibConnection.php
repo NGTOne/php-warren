@@ -60,9 +60,12 @@ class PhpAmqpLibConnection implements ConnectionInterface
             $this->callback
         );
 
+        // @codeCoverageIgnoreStart
+        // I've really got _no_ idea how to unit test this
         while (count($this->channel->callbacks)) {
             $this->channel->wait();
         }
+        // @codeCoverageIgnoreEnd
     }
 
     private function convertToAMQPMessage(
