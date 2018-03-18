@@ -6,6 +6,7 @@ use Warren\ConnectionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Message\AMQPMessage;
 
 use Warren\PSR\RabbitMQRequest;
 

@@ -7,6 +7,7 @@ use Warren\Connection\PhpAmqpLibConnection;
 use Warren\Test\Stub\StubAMQPChannel;
 
 use Warren\PSR\RabbitMQRequest;
+use Warren\PSR\RabbitMQResponse;
 
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -123,6 +124,68 @@ class PhpAmqpLibConnectionTest extends TestCase
             ], [
                 new AMQPMessage('f00b4r', ['reply_to' => 'bar']),
                 new RabbitMQRequest(['reply_to' => 'bar'], 'f00b4r')
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider sendMessageProvider
+     */
+    public function testSendMessage(
+        $response,
+        $expectedBody,
+        $expectedProperties
+    ) {
+        $this->channel->expects($this->once())
+            ->method('basic_publish')
+            ->with($this->callback(function ($msg) use (
+                $expectedBody,
+                $expectedProperties
+            ) {
+                $this->assertEquals(
+                    $expectedBody,
+                    $msg->getBody()
+                );
+                $this->assertEquals(
+                    $expectedProperties,
+                    $msg->get_properties()
+                );
+
+                return true;
+            }), '', 'the_reply_queue');
+
+        $this->conn->sendMessage(
+            $response,
+            new AMQPMessage,
+            'the_reply_queue'
+        );
+    }
+
+    public function sendMessageProvider()
+    {
+        return [
+            [
+                new RabbitMQResponse(['foo' => 'bar'], 'f00b4r'),
+                'f00b4r',
+                []
+            ], [
+                new RabbitMQResponse(['type' => 'a_serious_message']),
+                '',
+                ['type' => 'a_serious_message']
+            ], [
+                new RabbitMQResponse(),
+                '',
+                []
+            ], [
+                new RabbitMQResponse(['type' => 'msg'], 'f00b4r'),
+                'f00b4r',
+                ['type' => 'msg']
+            ], [
+                new RabbitMQResponse([
+                    'type' => ['msg', 'something']
+                ], 'f00b4r'),
+                'f00b4r',
+                ['type' => 'msg, something']
             ]
         ];
     }
