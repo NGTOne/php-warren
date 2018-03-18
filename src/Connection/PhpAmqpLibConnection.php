@@ -36,7 +36,7 @@ class PhpAmqpLibConnection implements ConnectionInterface
     public function acknowledgeMessage($msg) : void
     {
         $this->channel->basic_ack(
-            $message->delivery_info['delivery_tag']
+            $msg->delivery_info['delivery_tag']
         );
     }
 

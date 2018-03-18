@@ -4,8 +4,9 @@ namespace Warren\Test\Connection;
 
 use PHPUnit\Framework\TestCase;
 use Warren\Connection\PhpAmqpLibConnection;
-
 use Warren\Test\Stub\StubAMQPChannel;
+
+use PhpAmqpLib\Message\AMQPMessage;
 
 class PhpAmqpLibConnectionTest extends TestCase
 {
@@ -74,5 +75,17 @@ class PhpAmqpLibConnectionTest extends TestCase
     public function noLocalProvider()
     {
         return [[true], [false]];
+    }
+
+    public function testAcknowledgeMessage()
+    {
+        $this->channel->expects($this->once())
+            ->method('basic_ack')
+            ->with('f00b4r');
+
+        $msg = new AMQPMessage();
+        $msg->delivery_info['delivery_tag'] = 'f00b4r';
+
+        $this->conn->acknowledgeMessage($msg);
     }
 }
