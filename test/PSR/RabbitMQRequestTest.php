@@ -67,13 +67,13 @@ class RabbitMQRequestTest extends TestCase
     /**
      * @dataProvider getHeaderProvider
      */
-    public function testGetHeader($headers, $key, $expected)
+    public function testGetHeader($headers, $testKey, $expected)
     {
         foreach ($headers as $key => $header) {
             $this->req = $this->req->withHeader($key, $header);
         }
 
-        $this->assertEquals($expected, $this->req->getHeader($key));
+        $this->assertEquals($expected, $this->req->getHeader($testKey));
     }
 
     public function getHeaderProvider()
