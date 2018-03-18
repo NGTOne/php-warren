@@ -109,6 +109,8 @@ class RabbitConsumer
             $this->getSyncProcessor($action);
 
         $result = $proc->processMessage($req);
+
+        $this->conn->acknowledgeMessage($msg);
     }
 
     public function listen() : void

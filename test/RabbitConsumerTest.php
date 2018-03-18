@@ -22,11 +22,18 @@ class RabbitConsumerTest extends TestCase
         $expectedBody
     ) {
         $conn = $this->getMockBuilder(StubConnection::class)
-            ->setMethods(['sendMessage'])
+            ->setMethods(['sendMessage', 'acknowledgeMessage'])
             ->setConstructorArgs([$body, $headers])
             ->getMock();
 
-        $conn->expects($this->never())->method('sendMessage');
+        $conn->expects($this->never())
+            ->method('sendMessage');
+        $conn->expects($this->once())
+            ->method('acknowledgeMessage')
+            ->with($this->identicalTo(json_encode([
+                'body' => $body,
+                'header' => $headers
+            ])));
 
         $rabbit = new RabbitConsumer($conn);
 
