@@ -11,11 +11,7 @@ Warren is designed with two primary goals in mind:
     capable of undertaking multiple _different_ actions, both synchronous
     and asynchronous.
 2. Easy use of PSR7 middleware using the
-```php
-function(RequestInterface $req, ResponseInterface $res) : ResponseInterface {
-    // Magic
-}
-```
+`function (RequestInterface $req, ResponseInterface $res) : ResponseInterface`
 idiom, with different middleware stacks for synchronous and asynchronous
 calls.
 
