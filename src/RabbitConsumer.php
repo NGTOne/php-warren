@@ -12,6 +12,7 @@ use Warren\MiddlewareSet;
 use Warren\MessageProcessor\AsynchronousMessageProcessor;
 use Warren\MessageProcessor\SynchronousMessageProcessor;
 use Warren\Error\UnknownAction;
+use Warren\Error\ActionAlreadyExists;
 
 class RabbitConsumer
 {
@@ -49,6 +50,10 @@ class RabbitConsumer
         AsynchronousAction $action,
         string $name
     ) : RabbitConsumer {
+        if ($this->actionExists($name)) {
+            throw new ActionAlreadyExists($name);
+        }
+
         $this->asyncActions[$name] = $action;
         return $this;
     }
@@ -57,6 +62,10 @@ class RabbitConsumer
         SynchronousAction $action,
         string $name
     ) : RabbitConsumer {
+        if ($this->actionExists($name)) {
+            throw new ActionAlreadyExists($name);
+        }
+
         $this->syncActions[$name] = $action;
         return $this;
     }
@@ -73,6 +82,17 @@ class RabbitConsumer
     ) : RabbitConsumer {
         $this->asyncMiddlewares->addMiddleware($ware);
         return $this;
+    }
+
+    private function actionExists(string $action)
+    {
+        return array_search(
+            $action,
+            array_keys($this->asyncActions)
+        ) !== false or array_search(
+            $action,
+            array_keys($this->syncActions)
+        ) !== false;
     }
 
     private function getAsyncProcessor(
