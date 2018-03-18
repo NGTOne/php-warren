@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 use Warren\Connection\PhpAmqpLibConnection;
 use Warren\Test\Stub\StubAMQPChannel;
 
+use Warren\PSR\RabbitMQRequest;
+
 use PhpAmqpLib\Message\AMQPMessage;
 
 class PhpAmqpLibConnectionTest extends TestCase
@@ -87,5 +89,41 @@ class PhpAmqpLibConnectionTest extends TestCase
         $msg->delivery_info['delivery_tag'] = 'f00b4r';
 
         $this->conn->acknowledgeMessage($msg);
+    }
+
+    /**
+     * @dataProvider convertMessageProvider
+     */
+    public function testConvertMessage($msg, $expected)
+    {
+        $result = $this->conn->convertMessage($msg);
+
+        $this->assertEquals(
+            (string)$expected->getBody(),
+            (string)$result->getBody()
+        );
+        $this->assertEquals(
+            $expected->getHeaders(),
+            $result->getHeaders()
+        );
+    }
+
+    public function convertMessageProvider()
+    {
+        return [
+            [
+                new AMQPMessage(),
+                new RabbitMQRequest([], '')
+            ], [
+                new AMQPMessage('f00b4r'),
+                new RabbitMQRequest([], 'f00b4r')
+            ], [
+                new AMQPMessage('', ['reply_to' => 'bar']),
+                new RabbitMQRequest(['reply_to' => 'bar'], '')
+            ], [
+                new AMQPMessage('f00b4r', ['reply_to' => 'bar']),
+                new RabbitMQRequest(['reply_to' => 'bar'], 'f00b4r')
+            ]
+        ];
     }
 }
