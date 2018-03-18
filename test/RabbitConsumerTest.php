@@ -18,8 +18,10 @@ class RabbitConsumerTest extends TestCase
         $middlewares,
         $headers,
         $body,
-        $expectedHeaders,
-        $expectedBody
+        $expectedReqHeaders,
+        $expectedReqBody,
+        $expectedResHeaders,
+        $expectedResBody
     ) {
         $conn = $this->getMockBuilder(StubConnection::class)
             ->setMethods(['sendMessage', 'acknowledgeMessage'])
@@ -47,8 +49,10 @@ class RabbitConsumerTest extends TestCase
 
         $rabbit->listen();
 
-        $this->assertEquals($expectedHeaders, $action->reqHeaders);
-        $this->assertEquals($expectedBody, $action->reqBody);
+        $this->assertEquals($expectedReqHeaders, $action->reqHeaders);
+        $this->assertEquals($expectedReqBody, $action->reqBody);
+        $this->assertEquals($expectedResHeaders, $action->resHeaders);
+        $this->assertEquals($expectedResBody, $action->resBody);
     }
 
     public function asyncMessageSuccessProvider()
@@ -59,7 +63,19 @@ class RabbitConsumerTest extends TestCase
                 ['action' => 'my_cool_action'],
                 [],
                 ['action' => ['my_cool_action']],
-                '[]'
+                '[]',
+                [],
+                ''
+            ], [
+                [function ($req, $res) {
+                    return $res->withHeader('foo', 'bar');
+                }],
+                ['action' => 'my_cool_action'],
+                [],
+                ['action' => ['my_cool_action']],
+                '[]',
+                ['foo' => ['bar']],
+                ''
             ]
         ];
     }

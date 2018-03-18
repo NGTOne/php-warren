@@ -64,14 +64,14 @@ class RabbitConsumer
     public function addSynchronousMiddleware(
         callable $ware
     ) : RabbitConsumer {
-        $this->synchronousMiddlewares->addMiddleware($ware);
+        $this->syncMiddlewares->addMiddleware($ware);
         return $this;
     }
 
     public function addAsynchronousMiddleware(
         callable $ware
     ) : RabbitConsumer {
-        $this->asynchronousMiddlewares->addMiddleware($ware);
+        $this->asyncMiddlewares->addMiddleware($ware);
         return $this;
     }
 
