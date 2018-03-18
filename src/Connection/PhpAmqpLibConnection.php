@@ -73,7 +73,7 @@ class PhpAmqpLibConnection implements ConnectionInterface
                 return implode($header, ", ");
             },
             $response->getHeaders()
-        );
+        ));
     }
 
     public function sendMessage(
