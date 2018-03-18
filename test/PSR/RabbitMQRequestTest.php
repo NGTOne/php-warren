@@ -175,4 +175,41 @@ class RabbitMQRequestTest extends TestCase
             ]
         ];
     }
+
+    /**
+     * @dataProvider withHeaderProvider
+     */
+    public function testWithHeader($headers, $expected)
+    {
+        $result = $this->req;
+        foreach ($headers as $key => $header) {
+            $new = $result->withHeader($key, $header);
+            $this->assertNotSame($result, $new);
+            $result = $new;
+        }
+
+        $this->assertEquals($headers, $result->getHeaders());
+    }
+
+    public function withHeaderProvider()
+    {
+        return [
+            [
+                ["foo" => "bar"],
+                ["foo" => "bar"]
+            ], [
+                ["FOO" => "bar"],
+                ["FOO" => "bar"]
+            ], [
+                ["foo" => "bar", "FOO" => "baz"],
+                ["FOO" => "baz"]
+            ], [
+                ["foo" => "bar", "bar" => "baz"],
+                ["foo" => "bar", "bar" => "baz"]
+            ], [
+                ["foo" => ["bar", "quux"], "bar" => "baz"],
+                ["foo" => ["bar", "quux"], "bar" => "baz"]
+            ]
+        ];
+    }
 }
