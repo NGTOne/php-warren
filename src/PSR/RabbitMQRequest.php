@@ -10,6 +10,7 @@ use Psr\Http\Message\RequestInterface;
 class RabbitMQRequest implements RequestInterface
 {
     private $version = "0-9-1";
+    private $headers = [];
 
     public function getProtocolVersion()
     {
@@ -21,5 +22,10 @@ class RabbitMQRequest implements RequestInterface
         $req = new RabbitMQRequest;
         $req->version = $version;
         return $req;
+    }
+
+    public function getHeaders()
+    {
+        return $this->headers;
     }
 }
