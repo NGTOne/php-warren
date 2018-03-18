@@ -24,9 +24,10 @@
         "phpunit/phpunit": "7.*",
         "squizlabs/php_codesniffer": "*",
         "overtrue/phplint": "^1.0",
-        "sensiolabs/security-checker": "*"
+        "sensiolabs/security-checker": "*",
+        "php-amqplib/php-amqplib": "*"
     },
     "suggest": {
-        "phpamqplib/phpamqplib": "To use the PhpAmqpLib connection adapter"
+        "php-amqplib/php-amqplib": "To use the PhpAmqpLib connection adapter"
     }
 }
