@@ -9,9 +9,9 @@ use Warren\ConnectionInterface;
 use Warren\AsynchronousAction;
 use Warren\SynchronousAction;
 use Warren\MiddlewareSet;
-
 use Warren\MessageProcessor\AsynchronousMessageProcessor;
 use Warren\MessageProcessor\SynchronousMessageProcessor;
+use Warren\Error\UnknownAction;
 
 class RabbitConsumer
 {
@@ -107,6 +107,10 @@ class RabbitConsumer
 
         $proc = $this->getAsyncProcessor($action) ??
             $this->getSyncProcessor($action);
+
+        if (!$proc) {
+            throw new UnknownAction($action);
+        }
 
         $result = $proc->processMessage($req);
 

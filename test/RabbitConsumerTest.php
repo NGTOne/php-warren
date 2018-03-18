@@ -8,6 +8,7 @@ use Warren\Test\Stub\StubAsynchronousAction;
 use Warren\Test\Stub\StubSynchronousAction;
 
 use Warren\RabbitConsumer;
+use Warren\Error\UnknownAction;
 
 class RabbitConsumerTest extends TestCase
 {
@@ -95,5 +96,19 @@ class RabbitConsumerTest extends TestCase
                 'f00b4r'
             ]
         ];
+    }
+
+    public function testUnknownAction()
+    {
+        $conn = new StubConnection([], ['action' => 'my_nonexistent_action']);
+
+        $rabbit = new RabbitConsumer($conn);
+
+        $this->expectException(UnknownAction::class);
+        $this->expectExceptionMessage(
+            'Unknown action "my_nonexistent_action"'
+        );
+
+        $rabbit->listen();
     }
 }
