@@ -11,6 +11,7 @@ class RabbitMQRequest implements RequestInterface
 {
     private $version = "0-9-1";
     private $headers = [];
+    private $headerNames = [];
 
     public function getProtocolVersion()
     {
@@ -19,7 +20,7 @@ class RabbitMQRequest implements RequestInterface
 
     public function withProtocolVersion($version)
     {
-        $req = new RabbitMQRequest;
+        $req = clone $this;
         $req->version = $version;
         return $req;
     }
@@ -27,5 +28,19 @@ class RabbitMQRequest implements RequestInterface
     public function getHeaders()
     {
         return $this->headers;
+    }
+
+    public function getHeader($name)
+    {
+        return isset($this->headerNames[strtolower($name)]) ?
+            $this->headers[$this->headerNames[strtolower($name)]] : [];
+    }
+
+    public function withHeader($name, $value)
+    {
+        $req = clone $this;
+        $req->headerNames[strtolower($name)] = $name;
+        $req->headers[$name] = $value;
+        return $req;
     }
 }
