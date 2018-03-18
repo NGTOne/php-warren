@@ -57,10 +57,7 @@ abstract class RabbitMQMessage implements MessageInterface
 
     public function withHeader($name, $value)
     {
-        $req = clone $this;
-        if ($req->hasHeader($name)) {
-            unset($req->headers[$req->headerNames[strtolower($name)]]);
-        }
+        $req = $this->withoutHeader($name);
         $req->headerNames[strtolower($name)] = $name;
         $req->headers[$name] = $value;
         return $req;
