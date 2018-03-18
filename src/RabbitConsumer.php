@@ -112,7 +112,7 @@ class RabbitConsumer
     ) : ?SynchronousMessageProcessor {
         return array_search(
             $action,
-            array_keys($this->asyncActions)
+            array_keys($this->syncActions)
         ) !== false ? new SynchronousMessageProcessor(
             $this->syncMiddlewares,
             $this->syncActions[$action]
