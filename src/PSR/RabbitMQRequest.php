@@ -43,7 +43,7 @@ class RabbitMQRequest implements RequestInterface
 
     public function hasHeader($name)
     {
-
+        return isset($this->headerNames[strtolower($name)]);
     }
 
     public function withHeader($name, $value)
