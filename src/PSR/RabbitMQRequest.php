@@ -36,11 +36,73 @@ class RabbitMQRequest implements RequestInterface
             $this->headers[$this->headerNames[strtolower($name)]] : [];
     }
 
+    public function getHeaderLine($name)
+    {
+
+    }
+
+    public function hasHeader($name)
+    {
+
+    }
+
     public function withHeader($name, $value)
     {
         $req = clone $this;
         $req->headerNames[strtolower($name)] = $name;
         $req->headers[$name] = $value;
         return $req;
+    }
+
+    public function withAddedHeader($name, $value)
+    {
+
+    }
+
+    public function withoutHeader($name)
+    {
+
+    }
+
+    public function getBody()
+    {
+
+    }
+
+    public function withBody(\Psr\Http\Message\StreamInterface $body)
+    {
+
+    }
+
+    public function getRequestTarget()
+    {
+
+    }
+
+    public function withRequestTarget($requestTarget)
+    {
+
+    }
+
+    public function getMethod()
+    {
+
+    }
+
+    public function withMethod($method)
+    {
+
+    }
+
+    public function getUri()
+    {
+
+    }
+
+    public function withUri(
+        \Psr\Http\Message\UriInterface $uri,
+        $preserveHost = false
+    ) {
+
     }
 }
