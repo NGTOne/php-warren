@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 use Warren\MiddlewareSet;
 
+use Warren\PSR\RabbitMQRequest;
+use Warren\PSR\RabbitMQResponse;
+
 class MiddlewareSetTest extends TestCase
 {
     public function setUp() : void
@@ -50,23 +53,83 @@ class MiddlewareSetTest extends TestCase
     }
 
     /**
-     * @dataProvider middlewareProvider
+     * @dataProvider getMiddlewareStackProvider
      */
-    public function testClone($wares)
+    public function testGetMiddlewareStack($wares, $expected)
     {
+        $req = new RabbitMQRequest;
+        $res = new RabbitMQResponse;
+
         foreach ($wares as $ware) {
             $this->set->addMiddleware($ware);
         }
 
-        $result = $this->set->clone();
-        $result->addMiddleware(function (
-            RequestInterface $req,
-            ResponseInterface $res
-        ) {});
+        $stack = $this->set->getMiddlewareStack();
 
-        $this->assertCount(count($wares), $this->set);
-        $this->assertCount(count($wares) + 1, $result);
+        $this->assertEquals(
+            $expected,
+            (string)($stack($req, $res)->getBody())
+        );
+    }
 
-        $this->assertNotSame($this->set, $result);
+    public function getMiddlewareStackProvider()
+    {
+        return [
+            [
+                [function ($req, $res, $next = null) {
+                    return $res->withBody(
+                        \GuzzleHttp\Psr7\stream_for(
+                            "FOO".$req->getBody()."BAR"
+                        )
+                    );
+                }],
+                "FOOBAR"
+            ], [
+                [
+                    function ($req, $res, $next = null) {
+                        return $res->withBody(
+                            \GuzzleHttp\Psr7\stream_for(
+                                "FOO".$req->getBody()."BAR"
+                            )
+                        );
+                    },
+                    function ($req, $res, $next = null) {
+                        return $res->withBody(
+                            \GuzzleHttp\Psr7\stream_for(
+                                "BAZ".$next($res, $req)->getBody()."QUX"
+                            )
+                        );
+                    }
+                ],
+                "BAZFOOBARQUX"
+            ], [
+                [
+                    function ($req, $res, $next = null) {
+                        return $res->withBody(
+                            \GuzzleHttp\Psr7\stream_for(
+                                "FOO".$req->getBody()."BAR"
+                            )
+                        );
+                    },
+                    function ($req, $res, $next = null) {
+                        return $res->withBody(
+                            \GuzzleHttp\Psr7\stream_for(
+                                "BAZ".$next($res, $req)->getBody()."QUX"
+                            )
+                        );
+                    },
+                    function ($req, $res, $next = null) {
+                        return $res->withBody(
+                            \GuzzleHttp\Psr7\stream_for(
+                                "ANOTHER".
+                                    $next($res, $req)->getBody().
+                                    "ONE"
+                            )
+                        );
+                    }
+                ],
+                "ANOTHERBAZFOOBARQUXONE"
+            ]
+        ];
     }
 }

@@ -17,10 +17,22 @@ class MiddlewareSet implements \IteratorAggregate
         return new \ArrayIterator($this->middlewares);
     }
 
-    public function clone() : MiddlewareSet
+    public function getMiddlewareStack()
     {
-        return array_reduce($this->middlewares, function ($set, $ware) {
-            return $set->addMiddleware($ware);
-        }, new MiddlewareSet);
+        $wares = $this->middlewares;
+
+        $func = function($req, $res) use ($wares) {
+            return call_user_func($wares[0], $req, $res);
+        };
+
+        array_shift($wares);
+
+        foreach ($wares as $ware) {
+            $func = function($req, $res) use ($ware, $func) {
+                return call_user_func($ware, $req, $res, $func);
+            };
+        }
+
+        return $func;
     }
 }
