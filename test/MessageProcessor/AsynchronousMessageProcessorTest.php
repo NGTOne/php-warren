@@ -69,23 +69,39 @@ class AsynchronousMessageProcessTest extends TestCase
                 null,
                 []
             ], [
-                (new MiddlewareSet)->addMiddleware(function ($req, $res) {
-                    return $res->withHeader('baz', 'qux');
-                }),
+                (new MiddlewareSet)
+                    ->addMiddleware(function ($req, $res, $next = null) {
+                        return $next(
+                            $req,
+                            $res->withHeader('baz', 'qux')
+                        );
+                    }),
                 null,
                 ['baz' => ['qux']]
             ], [
-                (new MiddlewareSet)->addMiddleware(function ($req, $res) {
-                    return $res->withBody(Psr7\stream_for('f00b4r'));
-                }),
+                (new MiddlewareSet)
+                    ->addMiddleware(function ($req, $res, $next = null) {
+                        return $next(
+                            $req,
+                            $res->withBody(Psr7\stream_for('f00b4r'))
+                        );
+                    }),
                 'f00b4r',
                 []
             ], [
-                (new MiddlewareSet)->addMiddleware(function ($req, $res) {
-                    return $res->withBody(Psr7\stream_for('f00b4r'));
-                })->addMiddleware(function ($req, $res) {
-                    return $res->withHeader('baz', 'qux');
-                }),
+                (new MiddlewareSet)
+                    ->addMiddleware(function ($req, $res, $next = null) {
+                        return $next(
+                            $req,
+                            $res->withBody(Psr7\stream_for('f00b4r'))
+                        );
+                    })
+                    ->addMiddleware(function ($req, $res, $next = null) {
+                        return $next(
+                            $req,
+                            $res->withHeader('baz', 'qux')
+                        );
+                    }),
                 'f00b4r',
                 ['baz' => ['qux']]
             ]
