@@ -2,6 +2,8 @@
 
 namespace Warren;
 
+use Warren\Error\NoMiddlewares;
+
 class MiddlewareSet
 {
     private $middlewares = [];
@@ -15,6 +17,10 @@ class MiddlewareSet
     public function getMiddlewareStack()
     {
         $wares = $this->middlewares;
+
+        if (!count($wares)) {
+            throw new NoMiddlewares;
+        }
 
         $func = function($req, $res) use ($wares) {
             return call_user_func($wares[0], $req, $res);

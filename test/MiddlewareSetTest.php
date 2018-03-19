@@ -17,42 +17,6 @@ class MiddlewareSetTest extends TestCase
     }
 
     /**
-     * @dataProvider middlewareProvider
-     */
-    public function testAddMiddleware($wares)
-    {
-        foreach ($wares as $ware) {
-            $result = $this->set->addMiddleware($ware);
-            $this->assertSame($this->set, $result);
-        }
-
-        $this->assertCount(count($wares), $this->set);
-    }
-
-    public function middlewareProvider()
-    {
-        return [
-            [[]],
-            [[function (
-                RequestInterface $req,
-                ResponseInterface $res
-            ) {}]],
-            [
-                [
-                    function (
-                        RequestInterface $req,
-                        ResponseInterface $res
-                    ) {},
-                    function (
-                        RequestInterface $req,
-                        ResponseInterface $res
-                    ) {}
-                ]
-            ]
-        ];
-    }
-
-    /**
      * @dataProvider getMiddlewareStackProvider
      */
     public function testGetMiddlewareStack($wares, $expected)
@@ -61,7 +25,8 @@ class MiddlewareSetTest extends TestCase
         $res = new RabbitMQResponse;
 
         foreach ($wares as $ware) {
-            $this->set->addMiddleware($ware);
+            $result = $this->set->addMiddleware($ware);
+            $this->assertSame($this->set, $result);
         }
 
         $stack = $this->set->getMiddlewareStack();

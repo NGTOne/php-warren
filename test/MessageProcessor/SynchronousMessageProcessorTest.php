@@ -10,6 +10,7 @@ use Warren\PSR\RabbitMQRequest;
 use Warren\PSR\RabbitMQResponse;
 use Warren\MiddlewareSet;
 use Warren\MessageProcessor\SynchronousMessageProcessor;
+use Warren\Error\NoMiddlewares;
 
 class SynchronousMessageProcessorTest extends TestCase
 {
@@ -25,7 +26,9 @@ class SynchronousMessageProcessorTest extends TestCase
         $processor->processMessage(new RabbitMQRequest);
         $processor->processMessage(new RabbitMQRequest);
 
-        $this->assertCount(0, $wares);
+        $this->expectException(NoMiddlewares::class);
+
+        $wares->getMiddlewareStack();
     }
 
     /**
