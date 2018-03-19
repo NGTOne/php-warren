@@ -53,8 +53,11 @@ You can add PSR7 middleware to a Warren worker like so:
 ```php
 $warren
     ->addAsynchronousAction(new MyAwesomeAction, 'my_awesome_action')
-    ->addAsynchronousMiddleware(function ($req, $res) {
-        return $res->withBody('This is so cool!');
+    ->addAsynchronousMiddleware(function ($req, $res, $next) {
+        return $next(
+            $req,
+            $res->withHeader('this', 'is so cool!')
+        );
     })
     ->listen();
 ```
