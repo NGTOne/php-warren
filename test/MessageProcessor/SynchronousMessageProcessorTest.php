@@ -68,44 +68,66 @@ class SynchronousMessageProcessorTest extends TestCase
                 []
             ], [
                 new StubSynchronousAction(null, []),
-                (new MiddlewareSet)->addMiddleware(function ($req, $res) {
-                    return $res->withHeader('baz', 'qux');
-                }),
+                (new MiddlewareSet)
+                    ->addMiddleware(function ($req, $res, $next) {
+                        return $next(
+                            $req,
+                            $res->withHeader('baz', 'qux')
+                        );
+                    }),
                 null,
                 ['baz' => ['qux']],
                 null,
                 ['baz' => ['qux']]
             ], [
                 new StubSynchronousAction(null, []),
-                (new MiddlewareSet)->addMiddleware(function ($req, $res) {
-                    return $res->withBody(Psr7\stream_for('f00b4r'));
-                }),
+                (new MiddlewareSet)
+                    ->addMiddleware(function ($req, $res, $next) {
+                        return $next(
+                            $req,
+                            $res->withBody(Psr7\stream_for('f00b4r'))
+                        );
+                    }),
                 '',
                 [],
                 'f00b4r',
                 []
             ], [
                 new StubSynchronousAction(null, []),
-                (new MiddlewareSet)->addMiddleware(function ($req, $res) {
-                    return $res->withBody(Psr7\stream_for('f00b4r'));
-                })->addMiddleware(function ($req, $res) {
-                    return $res->withHeader('baz', 'qux');
-                }),
+                (new MiddlewareSet)
+                    ->addMiddleware(function ($req, $res, $next) {
+                        return $next(
+                            $req,
+                            $res->withBody(Psr7\stream_for('f00b4r'))
+                        );
+                    })->addMiddleware(function ($req, $res, $next) {
+                        return $next(
+                            $req,
+                            $res->withHeader('baz', 'qux')
+                        );
+                    }),
                 '',
                 ['baz' => ['qux']],
                 'f00b4r',
                 ['baz' => ['qux']]
             ], [
                 new StubSynchronousAction('b4rb4z', ['foo' => 'bar']),
-                (new MiddlewareSet)->addMiddleware(function ($req, $res) {
-                    return $res->withBody(Psr7\stream_for('f00b4r'));
-                })->addMiddleware(function ($req, $res) {
-                    return $res->withHeader('baz', 'qux');
-                }),
-                'b4rb4z',
-                ['baz' => ['qux'], 'foo' => ['bar']],
+                (new MiddlewareSet)
+                    ->addMiddleware(function ($req, $res, $next) {
+                        return $next(
+                            $req,
+                            $res
+                        )->withBody(Psr7\stream_for('f00b4r'));
+                    })->addMiddleware(function ($req, $res, $next) {
+                        return $next(
+                            $req,
+                            $res
+                        )->withHeader('baz', 'qux');
+                    }),
                 'f00b4r',
-                ['baz' => ['qux']]
+                ['baz' => ['qux'], 'foo' => ['bar']],
+                '',
+                []
             ]
         ];
     }
