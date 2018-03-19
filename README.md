@@ -15,7 +15,7 @@ Warren is designed with two primary goals in mind:
 function (
     RequestInterface $req,
     ResponseInterface $res,
-    callable $next
+    callable $next = null
 ) : ResponseInterface
 ```
 idiom, with different middleware stacks for synchronous and asynchronous
