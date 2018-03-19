@@ -25,10 +25,6 @@ abstract class MessageProcessor
     ) : ResponseInterface {
         $res = new RabbitMQResponse();
 
-        foreach ($this->middlewares as $ware) {
-            $res = call_user_func($ware, $req, $res);
-        }
-
-        return $res;
+        return $this->middlewares->getMiddlewareStack()($req, $res);
     }
 }
