@@ -16,7 +16,7 @@ class MiddlewareSet
 
     public function getMiddlewareStack()
     {
-        $wares = $this->middlewares;
+        $wares = array_reverse($this->middlewares);
 
         if (!count($wares)) {
             throw new NoMiddlewares;
