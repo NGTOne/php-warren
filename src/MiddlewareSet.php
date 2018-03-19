@@ -2,7 +2,7 @@
 
 namespace Warren;
 
-class MiddlewareSet implements \IteratorAggregate
+class MiddlewareSet
 {
     private $middlewares = [];
 
@@ -10,11 +10,6 @@ class MiddlewareSet implements \IteratorAggregate
     {
         $this->middlewares[] = $ware;
         return $this;
-    }
-
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->middlewares);
     }
 
     public function getMiddlewareStack()
