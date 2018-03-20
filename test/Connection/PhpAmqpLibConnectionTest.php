@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Warren\Connection\PhpAmqpLibConnection;
 use Warren\Test\Stub\StubAMQPChannel;
 
+use Warren\Error\UnknownReplyTo;
 use Warren\PSR\RabbitMQRequest;
 use Warren\PSR\RabbitMQResponse;
 
@@ -143,6 +144,13 @@ class PhpAmqpLibConnectionTest extends TestCase
                 new RabbitMQRequest([], 'f00b4r')
             ]
         ];
+    }
+
+    public function testSendResponseMissingReplyTo()
+    {
+        $this->expectException(UnknownReplyTo::class);
+
+        $this->conn->sendResponse(new AMQPMessage, new RabbitMQResponse);
     }
 
     /**
