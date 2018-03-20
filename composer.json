@@ -1,5 +1,5 @@
 {
-    "name": "sebastianl/warren",
+    "name": "warren/warren",
     "description": "A simple, object-oriented library for creating RabbitMQ service workers.",
     "keywords": ["rabbitmq", "message", "queue"],
     "homepage": "https://github.com/NGTOne/warren",
