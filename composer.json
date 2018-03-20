@@ -13,7 +13,11 @@
     "type": "library",
     "autoload": {
         "psr-4": {
-            "Warren\\": "src",
+            "Warren\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "Warren\\Test\\": "test"
         }
     },
