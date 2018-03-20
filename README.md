@@ -8,8 +8,10 @@ of "pub/sub").
 Warren is designed with two primary goals in mind:
 
 1. Easy, testable, object-oriented creation of service workers that are
-    capable of undertaking multiple _different_ actions, both synchronous
-    and asynchronous.
+    capable of undertaking multiple _different_ actions, both [request-only
+    (asynchronous)](https://www.rabbitmq.com/tutorials/tutorial-two-php.html)
+    and [request-response
+    (synchronous)](https://www.rabbitmq.com/tutorials/tutorial-six-php.html).
 2. Easy use of PSR7 middleware using the
 ```php
 function (
