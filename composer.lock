@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "48e615b678a5b0505a57226420608d4c",
+    "content-hash": "92cd699c04b39091e78d7e3f9d4613a1",
     "packages": [
         {
             "name": "guzzlehttp/psr7",
