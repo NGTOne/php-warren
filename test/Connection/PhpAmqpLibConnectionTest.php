@@ -158,6 +158,7 @@ class PhpAmqpLibConnectionTest extends TestCase
      */
     public function testSendResponse(
         $response,
+        $message,
         $expectedBody,
         $expectedProperties
     ) {
@@ -179,10 +180,7 @@ class PhpAmqpLibConnectionTest extends TestCase
                 return true;
             }), '', 'the_reply_queue');
 
-        $this->conn->sendResponse(
-            new AMQPMessage(null, ['reply_to' => 'the_reply_queue']),
-            $response
-        );
+        $this->conn->sendResponse($message, $response);
     }
 
     public function sendResponseProvider()
@@ -190,6 +188,7 @@ class PhpAmqpLibConnectionTest extends TestCase
         return [
             [
                 new RabbitMQResponse(['foo' => 'bar'], 'f00b4r'),
+                new AMQPMessage(null, ['reply_to' => 'the_reply_queue']),
                 'f00b4r',
                 [
                     'application_headers' => new AMQPTable([
@@ -199,6 +198,7 @@ class PhpAmqpLibConnectionTest extends TestCase
                 ]
             ], [
                 new RabbitMQResponse(),
+                new AMQPMessage(null, ['reply_to' => 'the_reply_queue']),
                 '',
                 [
                     'application_headers' => new AMQPTable,
@@ -206,6 +206,7 @@ class PhpAmqpLibConnectionTest extends TestCase
                 ]
             ], [
                 new RabbitMQResponse(['bar' => 'baz'], 'f00b4r'),
+                new AMQPMessage(null, ['reply_to' => 'the_reply_queue']),
                 'f00b4r',
                 [
                     'application_headers' => new AMQPTable([
@@ -217,12 +218,25 @@ class PhpAmqpLibConnectionTest extends TestCase
                 new RabbitMQResponse([
                     'stuff' => ['msg', 'something']
                 ], 'f00b4r'),
+                new AMQPMessage(null, ['reply_to' => 'the_reply_queue']),
                 'f00b4r',
                 [
                     'application_headers' => new AMQPTable([
                         'stuff' => ['msg', 'something']
                     ]),
                     'reply_to' => 'the_reply_queue'
+                ]
+            ], [
+                new RabbitMQResponse,
+                new AMQPMessage(null, [
+                    'reply_to' => 'the_reply_queue',
+                    'correlation_id' => 'my_corr_id'
+                ]),
+                '',
+                [
+                    'application_headers' => new AMQPTable,
+                    'reply_to' => 'the_reply_queue',
+                    'correlation_id' => 'my_corr_id'
                 ]
             ]
         ];
