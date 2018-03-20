@@ -345,9 +345,6 @@ class RabbitConsumerTest extends TestCase
                 'setActionHeader',
                 ['f00b4r']
             ], [
-                'setReplyToHeader',
-                ['f00b4r']
-            ], [
                 'addAsynchronousAction',
                 [new StubAsynchronousAction, 'foo']
             ], [

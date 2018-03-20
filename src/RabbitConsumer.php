@@ -23,7 +23,6 @@ class RabbitConsumer
     private $asyncMiddlewares;
     private $syncMiddlewares;
 
-    private $replyTo = 'reply_to';
     private $actionHeader = 'action';
 
     public function __construct(ConnectionInterface $conn)
@@ -32,12 +31,6 @@ class RabbitConsumer
 
         $this->asyncMiddlewares = new MiddlewareSet;
         $this->syncMiddlewares = new MiddlewareSet;
-    }
-
-    public function setReplyToHeader(string $replyTo) : RabbitConsumer
-    {
-        $this->replyTo = $replyTo;
-        return $this;
     }
 
     public function setActionHeader(string $action) : RabbitConsumer
@@ -137,8 +130,7 @@ class RabbitConsumer
         if ($proc instanceof SynchronousMessageProcessor) {
             $this->conn->sendMessage(
                 $result,
-                $msg,
-                $req->getHeaderLine($this->replyTo)
+                $msg
             );
         }
 

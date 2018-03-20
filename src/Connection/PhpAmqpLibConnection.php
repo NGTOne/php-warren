@@ -9,6 +9,7 @@ use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 use PhpAmqpLib\Wire\AMQPTable;
 
+use Warren\Error\UnknownReplyTo;
 use Warren\PSR\RabbitMQRequest;
 
 class PhpAmqpLibConnection implements ConnectionInterface
@@ -88,10 +89,21 @@ class PhpAmqpLibConnection implements ConnectionInterface
 
     public function sendMessage(
         ResponseInterface $response,
-        $originalMsg,
-        string $replyTo
+        $originalMsg
     ) : void {
         $newMsg = $this->convertToAMQPMessage($response);
+
+        foreach ($originalMsg->get_properties() as $index => $property) {
+            if ($index !== 'application_headers') {
+                $newMsg->set($index, $property);
+            }
+        }
+
+        try {
+            $replyTo = $originalMsg->get('reply_to');
+        } catch (\OutOfBoundsException $e) {
+            throw new UnknownReplyTo($e);
+        }
 
         $this->channel->basic_publish(
             $newMsg,

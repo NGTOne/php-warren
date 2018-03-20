@@ -173,8 +173,7 @@ class PhpAmqpLibConnectionTest extends TestCase
 
         $this->conn->sendMessage(
             $response,
-            new AMQPMessage,
-            'the_reply_queue'
+            new AMQPMessage(null, ['reply_to' => 'the_reply_queue'])
         );
     }
 
@@ -184,23 +183,39 @@ class PhpAmqpLibConnectionTest extends TestCase
             [
                 new RabbitMQResponse(['foo' => 'bar'], 'f00b4r'),
                 'f00b4r',
-                ['application_headers' => new AMQPTable(['foo' => ['bar']])]
+                [
+                    'application_headers' => new AMQPTable([
+                        'foo' => ['bar']
+                    ]),
+                    'reply_to' => 'the_reply_queue'
+                ]
             ], [
                 new RabbitMQResponse(),
                 '',
-                ['application_headers' => new AMQPTable]
+                [
+                    'application_headers' => new AMQPTable,
+                    'reply_to' => 'the_reply_queue'
+                ]
             ], [
                 new RabbitMQResponse(['bar' => 'baz'], 'f00b4r'),
                 'f00b4r',
-                ['application_headers' => new AMQPTable(['bar' => ['baz']])]
+                [
+                    'application_headers' => new AMQPTable([
+                        'bar' => ['baz']
+                    ]),
+                    'reply_to' => 'the_reply_queue'
+                ]
             ], [
                 new RabbitMQResponse([
                     'stuff' => ['msg', 'something']
                 ], 'f00b4r'),
                 'f00b4r',
-                ['application_headers' => new AMQPTable([
-                    'stuff' => ['msg', 'something']
-                ])]
+                [
+                    'application_headers' => new AMQPTable([
+                        'stuff' => ['msg', 'something']
+                    ]),
+                    'reply_to' => 'the_reply_queue'
+                ]
             ]
         ];
     }

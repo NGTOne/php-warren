@@ -54,8 +54,7 @@ class StubConnection implements ConnectionInterface
 
     public function sendMessage(
         ResponseInterface $response,
-        $originalMsg,
-        string $replyTo
+        $originalMsg
     ) : void {
         $this->sentMessage = $response;
     }
