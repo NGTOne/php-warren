@@ -27,12 +27,12 @@ class RabbitConsumerTest extends TestCase
         $expectedResBody
     ) {
         $conn = $this->getMockBuilder(StubConnection::class)
-            ->setMethods(['sendMessage', 'acknowledgeMessage'])
+            ->setMethods(['sendResponse', 'acknowledgeMessage'])
             ->setConstructorArgs([$body, $headers])
             ->getMock();
 
         $conn->expects($this->never())
-            ->method('sendMessage');
+            ->method('sendResponse');
         $conn->expects($this->once())
             ->method('acknowledgeMessage')
             ->with($this->identicalTo(json_encode([
@@ -128,7 +128,7 @@ class RabbitConsumerTest extends TestCase
         $expectedIncomingResBody
     ) {
         $conn = $this->getMockBuilder(StubConnection::class)
-            ->setMethods(['sendMessage', 'acknowledgeMessage'])
+            ->setMethods(['sendResponse', 'acknowledgeMessage'])
             ->setConstructorArgs([$body, $headers])
             ->getMock();
 
@@ -137,8 +137,8 @@ class RabbitConsumerTest extends TestCase
         ]);
 
         $conn->expects($this->once())
-            ->method('sendMessage')
-            ->with($this->callback(
+            ->method('sendResponse')
+            ->with($this->anything(), $this->callback(
                 function ($res) use ($expectedResHeaders) {
                     $this->assertEquals('f00b4r', $res->getBody());
                     $this->assertEquals(

@@ -12,8 +12,8 @@ interface ConnectionInterface
     public function acknowledgeMessage($msg) : void;
 
     public function convertMessage($msg) : RequestInterface;
-    public function sendMessage(
-        ResponseInterface $response,
-        $originalMsg
+    public function sendResponse(
+        $originalMsg,
+        ResponseInterface $response
     ) : void;
 }

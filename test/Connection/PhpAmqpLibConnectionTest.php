@@ -146,9 +146,9 @@ class PhpAmqpLibConnectionTest extends TestCase
     }
 
     /**
-     * @dataProvider sendMessageProvider
+     * @dataProvider sendResponseProvider
      */
-    public function testSendMessage(
+    public function testSendResponse(
         $response,
         $expectedBody,
         $expectedProperties
@@ -171,13 +171,13 @@ class PhpAmqpLibConnectionTest extends TestCase
                 return true;
             }), '', 'the_reply_queue');
 
-        $this->conn->sendMessage(
-            $response,
-            new AMQPMessage(null, ['reply_to' => 'the_reply_queue'])
+        $this->conn->sendResponse(
+            new AMQPMessage(null, ['reply_to' => 'the_reply_queue']),
+            $response
         );
     }
 
-    public function sendMessageProvider()
+    public function sendResponseProvider()
     {
         return [
             [
