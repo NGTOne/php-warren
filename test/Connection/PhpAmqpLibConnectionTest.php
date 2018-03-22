@@ -241,4 +241,62 @@ class PhpAmqpLibConnectionTest extends TestCase
             ]
         ];
     }
+
+    /**
+     * @dataProvider setHeaderPropertiesProvider
+     */
+    public function testSetHeaderProperties($mappings, $msg, $expected)
+    {
+        $result = $this->conn->setHeaderProperties($mappings);
+        $this->assertSame($this->conn, $result);
+
+        $result = $this->conn->convertMessage($msg);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function setHeaderPropertiesProvider()
+    {
+        return [
+            [
+                [],
+                new AMQPMessage('', [
+                    'correlation_id' => 'f00b4r'
+                ]),
+                new RabbitMQRequest
+            ], [
+                [
+                    'correlation_id' => 'corr_id'
+                ],
+                new AMQPMessage('', [
+                    'correlation_id' => 'f00b4r',
+                    'type' => 'magic'
+                ]),
+                new RabbitMQRequest(['corr_id' => 'f00b4r'])
+            ], [
+                [
+                    'correlation_id' => 'abc',
+                    'type' => 'my_stuff'
+                ],
+                new AMQPMessage('', [
+                    'correlation_id' => 'f00b4r',
+                    'type' => 'magic'
+                ]),
+                new RabbitMQRequest([
+                    'abc' => 'f00b4r',
+                    'my_stuff' => 'magic'
+                ])
+            ], [
+                [
+                    'application_headers' => 'abc'
+                ],
+                new AMQPMessage('', [
+                    'application_headers' => new AMQPTable([
+                        'foo' => 'bar'
+                    ]),
+                ]),
+                new RabbitMQRequest(['foo' => 'bar'])
+            ]
+        ];
+    }
 }
