@@ -296,6 +296,27 @@ class PhpAmqpLibConnectionTest extends TestCase
                     ]),
                 ]),
                 new RabbitMQRequest(['foo' => 'bar'])
+            ], [
+                [
+                    'correlation_id' => 'correlation_id'
+                ],
+                new AMQPMessage('', [
+                    'application_headers' => new AMQPTable([
+                        'correlation_id' => 'b4rb4z'
+                    ]),
+                    'correlation_id' => 'f00b4r'
+                ]),
+                new RabbitMQRequest(['correlation_id' => 'f00b4r'])
+            ], [
+                [
+                    'correlation_id' => 'corr_id'
+                ],
+                new AMQPMessage('', [
+                    'application_headers' => new AMQPTable([
+                        'foo' => 'bar'
+                    ]),
+                ]),
+                new RabbitMQRequest(['foo' => 'bar'])
             ]
         ];
     }
