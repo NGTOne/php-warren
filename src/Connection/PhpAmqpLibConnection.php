@@ -20,6 +20,8 @@ class PhpAmqpLibConnection implements ConnectionInterface
     private $queue;
     private $noLocal;
 
+    private $headerProperties = [];
+
     public function __construct(
         AMQPChannel $channel,
         string $queue,
@@ -51,10 +53,41 @@ class PhpAmqpLibConnection implements ConnectionInterface
             $headers = [];
         }
 
+        foreach ($this->headerProperties as $property => $header) {
+            try {
+                $headers[$header] = $msg->get($property);
+            } catch (\OutOfBoundsException $e) {
+                // Property isn't present, nothing to do here
+            }
+        }
+
         return new RabbitMQRequest(
             $headers,
             $msg->getBody()
         );
+    }
+
+    public function setHeaderProperties(array $mappings)
+    {
+        foreach ($mappings as $property => $header) {
+            if (!is_string($property)) {
+                throw new \TypeError(
+                    "All RabbitMQ properties are named using strings"
+                );
+            }
+
+            if (!is_string($header)) {
+                throw new \TypeError(
+                    "Attempting to map $property to a non-string header"
+                );
+            }
+        }
+
+        // Since we map the application headers anyways
+        unset($mappings['application_headers']);
+
+        $this->headerProperties = $mappings;
+        return $this;
     }
 
     public function listen() : void
@@ -80,11 +113,17 @@ class PhpAmqpLibConnection implements ConnectionInterface
     private function convertToAMQPMessage(
         ResponseInterface $response
     ) : AMQPMessage {
-        return new AMQPMessage((string)$response->getBody(), [
-            'application_headers' => new AMQPTable(
-                $response->getHeaders()
-            )
-        ]);
+        $properties = [];
+        foreach ($this->headerProperties as $property => $header) {
+            $properties[$property] = $response->getHeader($header);
+            $response = $response->withoutHeader($header);
+        }
+
+        $properties['application_headers'] = new AMQPTable(
+            $response->getHeaders()
+        );
+
+        return new AMQPMessage((string)$response->getBody(), $properties);
     }
 
     public function sendResponse(
