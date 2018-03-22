@@ -356,4 +356,59 @@ class PhpAmqpLibConnectionTest extends TestCase
             ]
         ];
     }
+
+    /**
+     * @dataProvider mappedHeaderResponseProvider
+     */
+    public function testMappedHeaderResponse(
+        $mappings,
+        $message,
+        $response,
+        $expectedProperties
+    ) {
+        $this->conn->setHeaderProperties($mappings);
+
+        $this->channel->expects($this->once())
+            ->method('basic_publish')
+            ->with($this->callback(function ($msg) use (
+                $expectedProperties
+            ) {
+                $this->assertEquals(
+                    $expectedProperties,
+                    $msg->get_properties()
+                );
+
+                return true;
+            }), '', 'foo');
+
+        $this->conn->sendResponse($message, $response);
+    }
+
+    public function mappedHeaderResponseProvider()
+    {
+        return [
+            [
+                ['correlation_id' => 'foo'],
+                new AMQPMessage('', ['reply_to' => 'foo']),
+                new RabbitMQResponse(['foo' => 'bar']),
+                [
+                    'correlation_id' => 'bar',
+                    'reply_to' => 'foo',
+                    'application_headers' => new AMQPTable
+                ]
+            ], [
+                ['correlation_id' => 'foo'],
+                new AMQPMessage('', [
+                    'reply_to' => 'foo',
+                    'correlation_id' => 'baz'
+                ]),
+                new RabbitMQResponse(['foo' => 'bar']),
+                [
+                    'correlation_id' => 'bar',
+                    'reply_to' => 'foo',
+                    'application_headers' => new AMQPTable
+                ]
+            ]
+        ];
+    }
 }

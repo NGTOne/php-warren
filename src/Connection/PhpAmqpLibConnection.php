@@ -115,7 +115,7 @@ class PhpAmqpLibConnection implements ConnectionInterface
     ) : AMQPMessage {
         $properties = [];
         foreach ($this->headerProperties as $property => $header) {
-            $properties[$property] = $response->getHeader($header);
+            $properties[$property] = $response->getHeaderLine($header);
             $response = $response->withoutHeader($header);
         }
 
