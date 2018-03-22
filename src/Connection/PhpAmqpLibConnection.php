@@ -115,8 +115,10 @@ class PhpAmqpLibConnection implements ConnectionInterface
     ) : AMQPMessage {
         $properties = [];
         foreach ($this->headerProperties as $property => $header) {
-            $properties[$property] = $response->getHeaderLine($header);
-            $response = $response->withoutHeader($header);
+            if ($response->hasHeader($header)) {
+                $properties[$property] = $response->getHeaderLine($header);
+                $response = $response->withoutHeader($header);
+            }
         }
 
         $properties['application_headers'] = new AMQPTable(
@@ -133,7 +135,14 @@ class PhpAmqpLibConnection implements ConnectionInterface
         $newMsg = $this->convertToAMQPMessage($response);
 
         foreach ($originalMsg->get_properties() as $index => $property) {
-            if ($index !== 'application_headers') {
+            $alreadyPresent = true;
+            try {
+                $newMsg->get($index);
+            } catch (\OutOfBoundsException $e) {
+                $alreadyPresent = false;
+            }
+
+            if ($index !== 'application_headers' and !$alreadyPresent) {
                 $newMsg->set($index, $property);
             }
         }

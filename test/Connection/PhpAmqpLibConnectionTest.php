@@ -408,6 +408,23 @@ class PhpAmqpLibConnectionTest extends TestCase
                     'reply_to' => 'foo',
                     'application_headers' => new AMQPTable
                 ]
+            ], [
+                [
+                    'correlation_id' => 'my_corr_id',
+                    'reply_to' => 'my_reply_to'
+                ],
+                new AMQPMessage('', [
+                    'reply_to' => 'foo',
+                    'correlation_id' => 'baz'
+                ]),
+                new RabbitMQResponse(['foo' => 'bar']),
+                [
+                    'correlation_id' => 'baz',
+                    'reply_to' => 'foo',
+                    'application_headers' => new AMQPTable([
+                        'foo' => ['bar']
+                    ])
+                ]
             ]
         ];
     }
