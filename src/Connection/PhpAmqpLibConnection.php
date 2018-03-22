@@ -70,7 +70,7 @@ class PhpAmqpLibConnection implements ConnectionInterface
     public function setHeaderProperties(array $mappings)
     {
         foreach ($mappings as $property => $header) {
-            if (!is_string($property)) {
+            if (!is_string($property) or empty($property)) {
                 throw new \TypeError(
                     "All RabbitMQ properties are named using strings"
                 );

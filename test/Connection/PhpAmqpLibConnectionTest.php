@@ -299,4 +299,40 @@ class PhpAmqpLibConnectionTest extends TestCase
             ]
         ];
     }
+
+    /**
+     * @dataProvider setHeaderPropertiesErrorProvider
+     */
+    public function testSetHeaderPropertiesErrors($mappings, $expectedMsg)
+    {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage($expectedMsg);
+
+        $this->conn->setHeaderProperties($mappings);
+    }
+
+    public function setHeaderPropertiesErrorProvider()
+    {
+        return [
+            [
+                [5 => 'foo'],
+                "All RabbitMQ properties are named using strings"
+            ], [
+                [null => 'foo'],
+                "All RabbitMQ properties are named using strings"
+            ], [
+                ['correlation_id' => null],
+                "Attempting to map correlation_id to a non-string header"
+            ], [
+                ['correlation_id' => 5],
+                "Attempting to map correlation_id to a non-string header"
+            ], [
+                ['correlation_id' => ['foo']],
+                "Attempting to map correlation_id to a non-string header"
+            ], [
+                ['correlation_id' => null],
+                "Attempting to map correlation_id to a non-string header"
+            ]
+        ];
+    }
 }
