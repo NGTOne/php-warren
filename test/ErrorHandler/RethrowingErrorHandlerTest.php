@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 
 use Warren\ErrorHandler\RethrowingErrorHandler;
 
+use Warren\PSR\RabbitMQRequest;
+
 use Warren\Error\UnknownAction;
 use Warren\Error\UnknownReplyTo;
 use Warren\Error\NoMiddlewares;
@@ -24,6 +26,8 @@ class RethrowingErrorHandlerTest extends TestCase
     {
         $this->expectException($expectedType);
         $this->expectExceptionMessage($expectedMsg);
+
+        $this->handler->setCurrentMessage(new RabbitMQRequest);
 
         $this->handler->handle($error);
     }
