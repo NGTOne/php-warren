@@ -18,7 +18,7 @@ class EchoingErrorHandler implements ErrorHandler
     public function handle(\Throwable $error) : ResponseInterface
     {
         echo "[".microtime(true).", corr_id ".
-            $this->currentMsg->getHeader("correlation_id").
+            $this->currentMsg->getHeaderLine("correlation_id").
             "]: ".$error->getMessage();
 
         // TODO: Make this a little smarter
