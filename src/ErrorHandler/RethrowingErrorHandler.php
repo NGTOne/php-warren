@@ -4,7 +4,7 @@ namespace Warren\ErrorHandler;
 
 use Warren\ErrorHandler;
 
-class RethrowingErrorHandler
+class RethrowingErrorHandler implements ErrorHandler
 {
     public function handle(\Throwable $error)
     {
