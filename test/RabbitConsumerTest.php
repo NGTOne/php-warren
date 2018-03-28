@@ -238,6 +238,7 @@ class RabbitConsumerTest extends TestCase
             ]
         ];
     }
+
     public function testUnknownAction()
     {
         $conn = new StubConnection([], ['action' => 'my_nonexistent_action']);
