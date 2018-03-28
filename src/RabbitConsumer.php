@@ -125,18 +125,24 @@ class RabbitConsumer
 
     private function processMsg($msg)
     {
-        $req = $this->conn->convertMessage($msg);
+        try {
+            $req = $this->conn->convertMessage($msg);
 
-        $action = $req->getHeaderLine($this->actionHeader);
+            $this->errorHandler->setCurrentMessage($req);
 
-        $proc = $this->getAsyncProcessor($action) ??
-            $this->getSyncProcessor($action);
+            $action = $req->getHeaderLine($this->actionHeader);
 
-        if (!$proc) {
-            throw new UnknownAction($action);
+            $proc = $this->getAsyncProcessor($action) ??
+                $this->getSyncProcessor($action);
+
+            if (!$proc) {
+                throw new UnknownAction($action);
+            }
+
+            $result = $proc->processMessage($req);
+        } catch (\Throwable $e) {
+            $result = $this->errorHandler->handle($e);
         }
-
-        $result = $proc->processMessage($req);
 
         if ($proc instanceof SynchronousMessageProcessor) {
             $this->conn->sendResponse(

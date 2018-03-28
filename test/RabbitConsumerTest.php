@@ -13,6 +13,7 @@ use Warren\Error\UnknownAction;
 use Warren\Error\ActionAlreadyExists;
 
 use Warren\ErrorHandler\EchoingErrorHandler;
+use Warren\ErrorHandler\RethrowingErrorHandler;
 
 class RabbitConsumerTest extends TestCase
 {
@@ -241,7 +242,8 @@ class RabbitConsumerTest extends TestCase
     {
         $conn = new StubConnection([], ['action' => 'my_nonexistent_action']);
 
-        $rabbit = new RabbitConsumer($conn);
+        $rabbit = (new RabbitConsumer($conn))
+            ->setErrorHandler(new RethrowingErrorHandler);
 
         $this->expectException(UnknownAction::class);
         $this->expectExceptionMessage(
