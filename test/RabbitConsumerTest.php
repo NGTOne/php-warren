@@ -12,6 +12,8 @@ use Warren\RabbitConsumer;
 use Warren\Error\UnknownAction;
 use Warren\Error\ActionAlreadyExists;
 
+use Warren\ErrorHandler\EchoingErrorHandler;
+
 class RabbitConsumerTest extends TestCase
 {
     /**
@@ -356,6 +358,9 @@ class RabbitConsumerTest extends TestCase
             ], [
                 'addSynchronousMiddleware',
                 [function ($req, $res) {}]
+            ], [
+                'setErrorHandler',
+                [new EchoingErrorHandler]
             ]
         ];
     }

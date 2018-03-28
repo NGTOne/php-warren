@@ -9,6 +9,8 @@ use Warren\ConnectionInterface;
 use Warren\AsynchronousAction;
 use Warren\SynchronousAction;
 use Warren\MiddlewareSet;
+use Warren\ErrorHandler;
+use Warren\ErrorHandler\EchoingErrorHandler;
 use Warren\MessageProcessor\AsynchronousMessageProcessor;
 use Warren\MessageProcessor\SynchronousMessageProcessor;
 use Warren\Error\UnknownAction;
@@ -22,6 +24,7 @@ class RabbitConsumer
 
     private $asyncMiddlewares;
     private $syncMiddlewares;
+    private $errorHandler;
 
     private $actionHeader = 'action';
 
@@ -31,6 +34,8 @@ class RabbitConsumer
 
         $this->asyncMiddlewares = new MiddlewareSet;
         $this->syncMiddlewares = new MiddlewareSet;
+
+        $this->errorHandler = new EchoingErrorHandler;
     }
 
     public function setActionHeader(string $action) : RabbitConsumer
@@ -74,6 +79,12 @@ class RabbitConsumer
         callable $ware
     ) : RabbitConsumer {
         $this->asyncMiddlewares->addMiddleware($ware);
+        return $this;
+    }
+
+    public function setErrorHandler(ErrorHandler $handler)
+    {
+        $this->errorHandler = $handler;
         return $this;
     }
 
