@@ -137,6 +137,7 @@ class RabbitConsumer
             $req = $this->conn->convertMessage($msg);
 
             $this->errorHandler->setCurrentMessage($req);
+            $this->replyErrorHandler->setCurrentMessage($req);
 
             $action = $req->getHeaderLine($this->actionHeader);
 
