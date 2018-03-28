@@ -25,6 +25,7 @@ class RabbitConsumer
     private $asyncMiddlewares;
     private $syncMiddlewares;
     private $errorHandler;
+    private $replyErrorHandler;
 
     private $actionHeader = 'action';
 
@@ -36,6 +37,7 @@ class RabbitConsumer
         $this->syncMiddlewares = new MiddlewareSet;
 
         $this->errorHandler = new EchoingErrorHandler;
+        $this->replyErrorHandler = new EchoingErrorHandler;
     }
 
     public function setActionHeader(string $action) : RabbitConsumer
@@ -85,6 +87,12 @@ class RabbitConsumer
     public function setErrorHandler(ErrorHandler $handler)
     {
         $this->errorHandler = $handler;
+        return $this;
+    }
+
+    public function setReplyErrorHandler(ErrorHandler $handler)
+    {
+        $this->replyErrorHandler = $handler;
         return $this;
     }
 
@@ -144,14 +152,18 @@ class RabbitConsumer
             $result = $this->errorHandler->handle($e);
         }
 
-        if ($proc instanceof SynchronousMessageProcessor) {
-            $this->conn->sendResponse(
-                $msg,
-                $result
-            );
-        }
+        try {
+            if ($proc instanceof SynchronousMessageProcessor) {
+                $this->conn->sendResponse(
+                    $msg,
+                    $result
+                );
+            }
 
-        $this->conn->acknowledgeMessage($msg);
+            $this->conn->acknowledgeMessage($msg);
+        } catch (\Throwable $e) {
+            $this->replyErrorHandler->handle($e);
+        }
     }
 
     public function listen() : void

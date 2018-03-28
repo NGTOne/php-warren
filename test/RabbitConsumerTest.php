@@ -364,6 +364,9 @@ class RabbitConsumerTest extends TestCase
             ], [
                 'setErrorHandler',
                 [new EchoingErrorHandler]
+            ], [
+                'setReplyErrorHandler',
+                [new EchoingErrorHandler]
             ]
         ];
     }
