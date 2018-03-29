@@ -337,16 +337,13 @@ class RabbitConsumerTest extends TestCase
             ->setMethods(['sendResponse'])
             ->getMock();
 
-        $handler = new RethrowingErrorHandler();
+        $handler = new EchoingErrorHandler();
 
         $conn->expects($this->once())
             ->method('sendResponse')
             ->will($this->throwException(
                 new \Exception('Something went wrong!')
             ));
-
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("Something went wrong!");
 
         $rabbit = new RabbitConsumer($conn);
 
@@ -355,6 +352,10 @@ class RabbitConsumerTest extends TestCase
         $rabbit->addSynchronousAction(
             new StubSynchronousAction('', []),
             'my_action'
+        );
+
+        $this->expectOutputRegex(
+            '/^\[\d+\.\d+, corr_id unknown\]: Something went wrong!$/'
         );
 
         $rabbit->listen();
