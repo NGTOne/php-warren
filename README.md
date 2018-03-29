@@ -86,3 +86,18 @@ $warren
 
 Synchronous and asynchronous actions have separate middleware stacks. Note
 that any response values for asynchronous actions _will_ be ignored.
+
+### Error Handling
+In the event that an exception or error propagates its way to the top of the
+call stack, Warren's got you covered - just drop any implementation of
+`Warren\ErrorHandler` into either of the following two methods:
+```php
+$warren
+    ->setErrorHandler($myAwesomeHandler)
+    ->setReplyErrorHandler($myAwesomeReplyHandler);
+```
+
+The error handler provided to `setErrorHandler` will be invoked if issues
+are encountered while processing the message. The handler provided to
+`setReplyErrorHandler` will be used if a problem is encountered while sending
+a reply message or acknowledging that the message has been processed.
