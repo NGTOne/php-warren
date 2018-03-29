@@ -330,6 +330,36 @@ class RabbitConsumerTest extends TestCase
         );
     }
 
+    public function testReplyError()
+    {
+        $conn = $this->getMockBuilder(StubConnection::class)
+            ->setConstructorArgs([[], ['action' => 'my_action']])
+            ->setMethods(['sendResponse'])
+            ->getMock();
+
+        $handler = new RethrowingErrorHandler();
+
+        $conn->expects($this->once())
+            ->method('sendResponse')
+            ->will($this->throwException(
+                new \Exception('Something went wrong!')
+            ));
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("Something went wrong!");
+
+        $rabbit = new RabbitConsumer($conn);
+
+        $rabbit->setReplyErrorHandler($handler);
+
+        $rabbit->addSynchronousAction(
+            new StubSynchronousAction('', []),
+            'my_action'
+        );
+
+        $rabbit->listen();
+    }
+
     /**
      * @dataProvider fluentInterfaceProvider
      */
