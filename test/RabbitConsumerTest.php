@@ -361,6 +361,36 @@ class RabbitConsumerTest extends TestCase
         $rabbit->listen();
     }
 
+    public function testAckError()
+    {
+        $conn = $this->getMockBuilder(StubConnection::class)
+            ->setConstructorArgs([[], ['action' => 'my_action']])
+            ->setMethods(['acknowledgeMessage'])
+            ->getMock();
+
+        $handler = new EchoingErrorHandler();
+
+        $conn->expects($this->once())
+            ->method('acknowledgeMessage')
+            ->will($this->throwException(
+                new \Exception('Something went wrong!')
+            ));
+
+        $rabbit = new RabbitConsumer($conn);
+
+        $rabbit->setReplyErrorHandler($handler);
+
+        $rabbit->addAsynchronousAction(
+            new StubAsynchronousAction,
+            'my_action'
+        );
+
+        $this->expectOutputRegex(
+            '/^\[\d+\.\d+, corr_id unknown\]: Something went wrong!$/'
+        );
+
+        $rabbit->listen();
+    }
     /**
      * @dataProvider fluentInterfaceProvider
      */
