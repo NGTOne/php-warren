@@ -166,9 +166,13 @@ class RabbitConsumer
             $this->replyErrorHandler->handle($e);
         }
 
-        // Something goes wrong acking the message, we're 6 different
-        // kinds of screwed anyways
-        $this->conn->acknowledgeMessage($msg);
+        try {
+             // Something goes wrong acking the message, we're 6 different
+             // kinds of screwed anyways
+             $this->conn->acknowledgeMessage($msg);
+        } catch (\Throwable $e) {
+            $this->replyErrorHandler->handle($e);
+        }
     }
 
     public function listen() : void
