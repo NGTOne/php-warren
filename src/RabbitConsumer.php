@@ -84,14 +84,16 @@ class RabbitConsumer
         return $this;
     }
 
-    public function setErrorHandler(ErrorHandler $handler)
-    {
+    public function setErrorHandler(
+        ErrorHandler $handler
+    ) : RabbitConsumer {
         $this->errorHandler = $handler;
         return $this;
     }
 
-    public function setReplyErrorHandler(ErrorHandler $handler)
-    {
+    public function setReplyErrorHandler(
+        ErrorHandler $handler
+    ) : RabbitConsumer {
         $this->replyErrorHandler = $handler;
         return $this;
     }
