@@ -190,6 +190,6 @@ class RabbitConsumer
             $this->processMsg($msg);
         });
 
-        $this->conn->listen();
+        $this->conn->listen($this->signalHandler);
     }
 }
