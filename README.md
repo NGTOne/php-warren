@@ -101,3 +101,16 @@ The error handler provided to `setErrorHandler` will be invoked if issues
 are encountered while processing the message. The handler provided to
 `setReplyErrorHandler` will be used if a problem is encountered while sending
 a reply message or acknowledging that the message has been processed.
+
+### Handling Signals
+One of the most common requirements for RabbitMQ service workers is to allow
+tasks to run to completion, regardless of whether or not the service has been
+instructed to shut down. For this use case, Warren provides the abstract class
+`Warren\Signal\SignalHandler` - simply implement its `handleSignals()` method,
+and drop it into Warren like so:
+```php
+$warren
+    ->setSignalHandler($myAwesomeHandler);
+```
+By default, Warren will handle `SIGTERM` and `SIGHUP`, and exit _after_
+completion of the current task.
