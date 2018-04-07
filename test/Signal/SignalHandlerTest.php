@@ -3,6 +3,7 @@
 namespace Warren\Test\Signal;
 
 use Warren\Test\Stub\StubSignalHandler;
+use Warren\Signal\Error\InvalidSignal;
 
 use PHPUnit\Framework\TestCase;
 
@@ -67,5 +68,33 @@ class SignalHandlerTest extends TestCase
 
         $handler->handleReceivedSignals();
         $this->assertEquals([15 => 'SIGTERM'], $handler->signals);
+    }
+
+    /**
+     * @dataProvider invalidSignalProvider
+     */
+    public function testInvalidSignal($signals, $expectedMsg)
+    {
+        $this->expectException(InvalidSignal::class);
+        $this->expectExceptionMessage($expectedMsg);
+
+        new StubSignalHandler($signals);
+    }
+
+    public function invalidSignalProvider()
+    {
+        return [
+            [
+                [[]], "array is not a valid signal."
+            ], [
+                [new \stdClass], "object is not a valid signal."
+            ], [
+                [true], "boolean is not a valid signal."
+            ], [
+                [2.1], "double is not a valid signal."
+            ], [
+                [null], "NULL is not a valid signal."
+            ]
+        ];
     }
 }
