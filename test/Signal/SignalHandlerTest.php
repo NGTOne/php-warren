@@ -51,4 +51,21 @@ class SignalHandlerTest extends TestCase
             ]
         ];
     }
+
+    public function testMultipleInvocations()
+    {
+        $handler = new StubSignalHandler(['SIGHUP', 'SIGTERM']);
+
+        posix_kill(posix_getpid(), SIGHUP);
+        pcntl_signal_dispatch();
+
+        $handler->handleReceivedSignals();
+        $this->assertEquals([1 => 'SIGHUP'], $handler->signals);
+
+        posix_kill(posix_getpid(), SIGTERM);
+        pcntl_signal_dispatch();
+
+        $handler->handleReceivedSignals();
+        $this->assertEquals([15 => 'SIGTERM'], $handler->signals);
+    }
 }
