@@ -10,6 +10,7 @@ abstract class SignalHandler
 {
     private $receivedSignals = [];
     private $handler;
+    private $existingSignalHandlers = [];
 
     public function __construct(array $signals)
     {
@@ -21,13 +22,47 @@ abstract class SignalHandler
             }
         }
 
+        $this->targetSignals = $signals;
+    }
+
+    private function getExistingHandlers()
+    {
+        $existingHandlers = [];
+
+        foreach ($this->targetSignals as $signal) {
+            if (is_string($signal)) {
+                $signal = constant($signal);
+            }
+
+            $existingHandlers[$signal] = pcntl_signal_get_handler(
+                $signal
+            );
+        }
+
+        return $existingHandlers;
+    }
+
+    public function enable()
+    {
+        $this->existingSignalHandlers = $this->getExistingHandlers();
+
         $this->handler = SeldHandler::create(
-            $signals,
+            $this->targetSignals,
             // Wrap it in an anon function so it can stay private
             function ($signo, $signame) {
                 $this->handleSignal($signo, $signame);
             }
         );
+    }
+
+    public function disable()
+    {
+        foreach ($this->existingSignalHandlers as $signo => $handler) {
+            pcntl_signal($signo, $handler);
+        }
+
+        $this->existingSignalHandlers = [];
+        unset($this->handler);
     }
 
     private function handleSignal($signo, $signame) : void
@@ -47,7 +82,7 @@ abstract class SignalHandler
 
     public function handleReceivedSignals() : void
     {
-        if ($this->handler->isTriggered()) {
+        if ($this->handler and $this->handler->isTriggered()) {
             $this->handleSignals();
             $this->reset();
             $this->handler->reset();

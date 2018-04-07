@@ -18,6 +18,7 @@ class SignalHandlerTest extends TestCase
         $expectedSignals
     ) {
         $handler = new StubSignalHandler($signalsToHandle);
+        $handler->enable();
 
         foreach ($signalsToSend as $signal)
         {
@@ -56,6 +57,7 @@ class SignalHandlerTest extends TestCase
     public function testMultipleInvocations()
     {
         $handler = new StubSignalHandler(['SIGHUP', 'SIGTERM']);
+        $handler->enable();
 
         posix_kill(posix_getpid(), SIGHUP);
         pcntl_signal_dispatch();
