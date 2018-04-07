@@ -51,8 +51,12 @@ class SignalHandlerTest extends TestCase
                 [SIGTERM],
                 [15 => 'SIGTERM']
             ], [
-                [SIGHUP, 'SIGTERM'],
                 [SIGHUP],
+                [SIGHUP],
+                [1 => 'SIGHUP']
+            ], [
+                [1],
+                [1],
                 [1 => 'SIGHUP']
             ]
         ];
