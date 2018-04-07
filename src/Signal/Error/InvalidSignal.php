@@ -1,6 +1,6 @@
 <?php
 
-namespace Warren\Error;
+namespace Warren\Signal\Error;
 
 class InvalidSignal extends \Exception
 {

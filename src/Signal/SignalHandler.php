@@ -2,7 +2,7 @@
 
 namespace Warren\Signal;
 
-use Warren\Error\InvalidSignal;
+use Warren\Signal\Error\InvalidSignal;
 
 use Seld\Signal\SignalHandler as SeldHandler;
 
