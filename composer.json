@@ -36,7 +36,6 @@
         "php-amqplib/php-amqplib": "2.*"
     },
     "suggest": {
-        "php-amqplib/php-amqplib": "To use the PhpAmqpLib connection adapter",
-        "seld/signal-handler": "To allow graceful handling of shutdown signals"
+        "php-amqplib/php-amqplib": "To use the PhpAmqpLib connection adapter"
     }
 }
