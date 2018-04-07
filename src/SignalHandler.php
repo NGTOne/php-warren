@@ -8,7 +8,6 @@ use Seld\Signal\SignalHandler as SeldHandler;
 
 abstract class SignalHandler
 {
-    private $receivedSigNos = [];
     private $receivedSignals = [];
     private $handler;
 
@@ -24,6 +23,7 @@ abstract class SignalHandler
 
         $this->handler = SeldHandler::create(
             $signals,
+            // Wrap it in an anon function so it can stay private
             function ($signo, $signame) {
                 $this->handleSignal($signo, $signame);
             }
@@ -32,24 +32,17 @@ abstract class SignalHandler
 
     private function handleSignal($signo, $signame) : void
     {
-        $this->receivedSigNos[] = $signo;
-        $this->receivedSignals[] = $signame;
+        $this->receivedSignals[$signo] = $signame;
     }
 
-    protected function receivedSigNames() : array
+    protected function receivedSignals() : array
     {
         return $this->receivedSignals;
-    }
-
-    protected function receivedSigNumbers() : array
-    {
-        return $this->receivedSigNos;
     }
 
     private function reset() : void
     {
         $this->receivedSignals = [];
-        $this->receivedSigNos = [];
     }
 
     public function handleReceivedSignals() : void
