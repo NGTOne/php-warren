@@ -10,6 +10,7 @@ use Warren\AsynchronousAction;
 use Warren\SynchronousAction;
 use Warren\MiddlewareSet;
 use Warren\ErrorHandler;
+use Warren\SignalHandler;
 use Warren\ErrorHandler\EchoingErrorHandler;
 use Warren\MessageProcessor\AsynchronousMessageProcessor;
 use Warren\MessageProcessor\SynchronousMessageProcessor;
@@ -26,6 +27,7 @@ class RabbitConsumer
     private $syncMiddlewares;
     private $errorHandler;
     private $replyErrorHandler;
+    private $signalHandler;
 
     private $actionHeader = 'action';
 
@@ -81,6 +83,13 @@ class RabbitConsumer
         callable $ware
     ) : RabbitConsumer {
         $this->asyncMiddlewares->addMiddleware($ware);
+        return $this;
+    }
+
+    public function setSignalHandler(
+        SignalHandler $handler
+    ) : RabbitConsumer {
+        $this->signalHandler = $handler;
         return $this;
     }
 

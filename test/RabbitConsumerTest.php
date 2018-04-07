@@ -7,10 +7,11 @@ use Warren\Test\Stub\StubConnection;
 use Warren\Test\Stub\StubAsynchronousAction;
 use Warren\Test\Stub\StubSynchronousAction;
 
-use Warren\PSR\RabbitMQResponse;
 use Warren\RabbitConsumer;
 use Warren\Error\UnknownAction;
 use Warren\Error\ActionAlreadyExists;
+use Warren\PSR\RabbitMQResponse;
+use Warren\SignalHandler;
 
 use Warren\ErrorHandler\EchoingErrorHandler;
 use Warren\ErrorHandler\RethrowingErrorHandler;
@@ -428,6 +429,14 @@ class RabbitConsumerTest extends TestCase
             ], [
                 'setReplyErrorHandler',
                 [new EchoingErrorHandler]
+            ], [
+                'setSignalHandler',
+                [
+                    $this->getMockBuilder(SignalHandler::class)
+                        ->setMethods(['handleSignals'])
+                        ->disableOriginalConstructor()
+                        ->getMock()
+                ]
             ]
         ];
     }
