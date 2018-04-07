@@ -43,7 +43,8 @@ class RabbitConsumer
         $this->replyErrorHandler = new EchoingErrorHandler;
         $this->signalHandler = new ExitingSignalHandler([
             'SIGTERM',
-            'SIGHUP'
+            'SIGHUP',
+            'SIGINT'
         ]);
     }
 
