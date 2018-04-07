@@ -32,9 +32,11 @@
         "squizlabs/php_codesniffer": "*",
         "overtrue/phplint": "^1.0",
         "sensiolabs/security-checker": "*",
-        "php-amqplib/php-amqplib": "2.*"
+        "php-amqplib/php-amqplib": "2.*",
+        "seld/signal-handler": "^1.0"
     },
     "suggest": {
-        "php-amqplib/php-amqplib": "To use the PhpAmqpLib connection adapter"
+        "php-amqplib/php-amqplib": "To use the PhpAmqpLib connection adapter",
+        "seld/signal-handler": "To allow graceful handling of shutdown signals"
     }
 }
