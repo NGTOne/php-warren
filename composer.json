@@ -25,6 +25,7 @@
     "require": {
         "psr/http-message": "1.0.*",
         "php": ">=7.1.0",
+        "ext-pcntl": "*",
         "guzzlehttp/psr7": "1.4.*",
         "seld/signal-handler": "^1.0"
     },
@@ -33,7 +34,8 @@
         "squizlabs/php_codesniffer": "*",
         "overtrue/phplint": "^1.0",
         "sensiolabs/security-checker": "*",
-        "php-amqplib/php-amqplib": "2.*"
+        "php-amqplib/php-amqplib": "2.*",
+        "ext-posix": "*"
     },
     "suggest": {
         "php-amqplib/php-amqplib": "To use the PhpAmqpLib connection adapter"
