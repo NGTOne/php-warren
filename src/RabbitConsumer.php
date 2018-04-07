@@ -150,6 +150,8 @@ class RabbitConsumer
 
     private function processMsg($msg)
     {
+        $this->signalHandler->enable();
+
         try {
             $req = $this->conn->convertMessage($msg);
 
@@ -188,6 +190,9 @@ class RabbitConsumer
         } catch (\Throwable $e) {
             $this->replyErrorHandler->handle($e);
         }
+
+        $this->signalHandler->handleReceivedSignals();
+        $this->signalHandler->disable();
     }
 
     public function listen() : void
