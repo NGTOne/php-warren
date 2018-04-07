@@ -16,6 +16,7 @@ use Warren\MessageProcessor\AsynchronousMessageProcessor;
 use Warren\MessageProcessor\SynchronousMessageProcessor;
 use Warren\Error\UnknownAction;
 use Warren\Error\ActionAlreadyExists;
+use Warren\Signal\ExitingSignalHandler;
 
 class RabbitConsumer
 {
@@ -40,6 +41,7 @@ class RabbitConsumer
 
         $this->errorHandler = new EchoingErrorHandler;
         $this->replyErrorHandler = new EchoingErrorHandler;
+        $this->signalHandler = new ExitingSignalHandler(['SIGTERM']);
     }
 
     public function setActionHeader(string $action) : RabbitConsumer
