@@ -28,6 +28,8 @@ class PhpAmqpLibConnection implements ConnectionInterface
         string $queue,
         bool $noLocal = false
     ) {
+        define('AMQP_WITHOUT_SIGNALS', true);
+
         $this->channel = $channel;
 
         $this->queue = $queue;
