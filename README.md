@@ -112,5 +112,5 @@ and drop it into Warren like so:
 $warren
     ->setSignalHandler($myAwesomeHandler);
 ```
-By default, Warren will handle `SIGTERM` and `SIGHUP`, and exit _after_
-completion of the current task.
+By default, Warren will handle `SIGTERM`, `SIGINT`, and `SIGHUP`, and exit
+after completion of the current task.
