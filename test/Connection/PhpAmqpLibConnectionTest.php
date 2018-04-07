@@ -5,6 +5,7 @@ namespace Warren\Test\Connection;
 use PHPUnit\Framework\TestCase;
 use Warren\Connection\PhpAmqpLibConnection;
 use Warren\Test\Stub\StubAMQPChannel;
+use Warren\Test\Stub\StubSignalHandler;
 
 use Warren\Error\UnknownReplyTo;
 use Warren\PSR\RabbitMQRequest;
@@ -47,7 +48,7 @@ class PhpAmqpLibConnectionTest extends TestCase
             );
 
         $this->conn->setCallback($call);
-        $this->conn->listen();
+        $this->conn->listen(new StubSignalHandler([]));
     }
 
     /**
@@ -74,7 +75,7 @@ class PhpAmqpLibConnectionTest extends TestCase
             );
 
         $conn->setCallback($call);
-        $conn->listen();
+        $conn->listen(new StubSignalHandler([]));
     }
 
     public function noLocalProvider()

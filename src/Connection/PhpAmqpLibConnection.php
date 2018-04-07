@@ -11,6 +11,7 @@ use PhpAmqpLib\Wire\AMQPTable;
 
 use Warren\Error\UnknownReplyTo;
 use Warren\PSR\RabbitMQRequest;
+use Warren\Signal\SignalHandler;
 
 class PhpAmqpLibConnection implements ConnectionInterface
 {
@@ -90,7 +91,7 @@ class PhpAmqpLibConnection implements ConnectionInterface
         return $this;
     }
 
-    public function listen() : void
+    public function listen(SignalHandler $handler) : void
     {
         $this->channel->basic_consume(
             $this->queue,
@@ -102,12 +103,10 @@ class PhpAmqpLibConnection implements ConnectionInterface
             $this->callback
         );
 
-        // @codeCoverageIgnoreStart
-        // I've really got _no_ idea how to unit test this
         while (count($this->channel->callbacks)) {
+            $handler->handleReceivedSignals();
             $this->channel->wait();
         }
-        // @codeCoverageIgnoreEnd
     }
 
     private function convertToAMQPMessage(
