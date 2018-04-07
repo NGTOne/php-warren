@@ -41,7 +41,10 @@ class RabbitConsumer
 
         $this->errorHandler = new EchoingErrorHandler;
         $this->replyErrorHandler = new EchoingErrorHandler;
-        $this->signalHandler = new ExitingSignalHandler(['SIGTERM']);
+        $this->signalHandler = new ExitingSignalHandler([
+            'SIGTERM',
+            'SIGHUP'
+        ]);
     }
 
     public function setActionHeader(string $action) : RabbitConsumer
