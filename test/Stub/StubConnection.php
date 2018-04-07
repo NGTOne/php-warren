@@ -8,7 +8,6 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 use Warren\PSR\RabbitMQRequest;
-use Warren\Signal\SignalHandler;
 
 // Simple stub class that uses arrays as its "messages"
 class StubConnection implements ConnectionInterface
@@ -25,7 +24,7 @@ class StubConnection implements ConnectionInterface
         $this->headers = $headers;
     }
 
-    public function listen(SignalHandler $handler) : void
+    public function listen() : void
     {
         call_user_func($this->callback, json_encode([
            'body' => $this->msgToSend,

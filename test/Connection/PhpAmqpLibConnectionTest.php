@@ -5,7 +5,6 @@ namespace Warren\Test\Connection;
 use PHPUnit\Framework\TestCase;
 use Warren\Connection\PhpAmqpLibConnection;
 use Warren\Test\Stub\StubAMQPChannel;
-use Warren\Test\Stub\StubSignalHandler;
 
 use Warren\Error\UnknownReplyTo;
 use Warren\PSR\RabbitMQRequest;
@@ -49,7 +48,7 @@ class PhpAmqpLibConnectionTest extends TestCase
             );
 
         $this->conn->setCallback($call);
-        $this->conn->listen(new StubSignalHandler([]));
+        $this->conn->listen();
     }
 
     /**
@@ -76,7 +75,7 @@ class PhpAmqpLibConnectionTest extends TestCase
             );
 
         $conn->setCallback($call);
-        $conn->listen(new StubSignalHandler([]));
+        $conn->listen();
     }
 
     public function noLocalProvider()
@@ -429,31 +428,5 @@ class PhpAmqpLibConnectionTest extends TestCase
                 ]
             ]
         ];
-    }
-
-    public function testListenSignalHandling()
-    {
-        $handler = new StubSignalHandler(['SIGHUP']);
-
-        $this->channel->expects($this->once())
-            ->method('wait')
-            ->will($this->returnCallback(function () {
-                // A bit of a hack, to pretend we're performing some
-                // time-consuming task
-                usleep(250000);
-                pcntl_signal_dispatch();
-                $this->channel->callbacks = [];
-            }));
-
-        $this->channel->callbacks = ['foo'];
-
-        posix_kill(posix_getpid(), SIGHUP);
-
-        $start = microtime(true);
-        $this->conn->listen($handler);
-        $end = microtime(true);
-
-        $this->assertEquals([1 => 'SIGHUP'], $handler->signals);
-        $this->assertGreaterThan(0.25, $end - $start);
     }
 }

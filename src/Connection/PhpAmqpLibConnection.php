@@ -11,7 +11,6 @@ use PhpAmqpLib\Wire\AMQPTable;
 
 use Warren\Error\UnknownReplyTo;
 use Warren\PSR\RabbitMQRequest;
-use Warren\Signal\SignalHandler;
 
 class PhpAmqpLibConnection implements ConnectionInterface
 {
@@ -28,8 +27,6 @@ class PhpAmqpLibConnection implements ConnectionInterface
         string $queue,
         bool $noLocal = false
     ) {
-        define('AMQP_WITHOUT_SIGNALS', true);
-
         $this->channel = $channel;
 
         $this->queue = $queue;
@@ -93,7 +90,7 @@ class PhpAmqpLibConnection implements ConnectionInterface
         return $this;
     }
 
-    public function listen(SignalHandler $handler) : void
+    public function listen() : void
     {
         $this->channel->basic_consume(
             $this->queue,
@@ -106,8 +103,7 @@ class PhpAmqpLibConnection implements ConnectionInterface
         );
 
         while (count($this->channel->callbacks)) {
-            $handler->handleReceivedSignals();
-            $this->channel->wait(null, true);
+            $this->channel->wait();
         }
     }
 
