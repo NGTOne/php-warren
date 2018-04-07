@@ -105,7 +105,7 @@ class PhpAmqpLibConnection implements ConnectionInterface
 
         while (count($this->channel->callbacks)) {
             $handler->handleReceivedSignals();
-            $this->channel->wait();
+            $this->channel->wait(null, true);
         }
     }
 
