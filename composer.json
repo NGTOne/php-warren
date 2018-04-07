@@ -25,15 +25,15 @@
     "require": {
         "psr/http-message": "1.0.*",
         "php": ">=7.1.0",
-        "guzzlehttp/psr7": "1.4.*"
+        "guzzlehttp/psr7": "1.4.*",
+        "seld/signal-handler": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "7.*",
         "squizlabs/php_codesniffer": "*",
         "overtrue/phplint": "^1.0",
         "sensiolabs/security-checker": "*",
-        "php-amqplib/php-amqplib": "2.*",
-        "seld/signal-handler": "^1.0"
+        "php-amqplib/php-amqplib": "2.*"
     },
     "suggest": {
         "php-amqplib/php-amqplib": "To use the PhpAmqpLib connection adapter",
