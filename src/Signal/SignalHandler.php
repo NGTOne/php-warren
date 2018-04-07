@@ -1,6 +1,6 @@
 <?php
 
-namespace Warren;
+namespace Warren\Signal;
 
 use Warren\Error\InvalidSignal;
 
