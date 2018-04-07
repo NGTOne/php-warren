@@ -72,6 +72,35 @@ class SignalHandlerTest extends TestCase
         $this->assertEquals([15 => 'SIGTERM'], $handler->signals);
     }
 
+    public function testRestoringOriginalHandlers()
+    {
+        pcntl_signal(SIGHUP, SIG_IGN);
+
+        $handler = new StubSignalHandler(['SIGHUP']);
+        $handler->enable();
+
+        posix_kill(posix_getpid(), SIGHUP);
+        pcntl_signal_dispatch();
+
+        $handler->handleReceivedSignals();
+        $this->assertEquals([1 => 'SIGHUP'], $handler->signals);
+
+        $handler->disable();
+        $this->assertEquals(SIG_IGN, pcntl_signal_get_handler(SIGHUP));
+    }
+
+    // Calls to enable() should be idempotent
+    public function testMultipleEnables()
+    {
+        pcntl_signal(SIGHUP, SIG_IGN);
+        $handler = new StubSignalHandler(['SIGHUP']);
+        $handler->enable();
+        $handler->enable();
+
+        $handler->disable();
+        $this->assertEquals(SIG_IGN, pcntl_signal_get_handler(SIGHUP));
+    }
+
     /**
      * @dataProvider invalidSignalProvider
      */

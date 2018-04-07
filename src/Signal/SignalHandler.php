@@ -44,6 +44,11 @@ abstract class SignalHandler
 
     public function enable()
     {
+        if ($this->handler) {
+            // We're already enabled
+            return;
+        }
+
         $this->existingSignalHandlers = $this->getExistingHandlers();
 
         $this->handler = SeldHandler::create(
