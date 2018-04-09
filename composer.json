@@ -30,7 +30,7 @@
         "seld/signal-handler": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "6.*",
+        "phpunit/phpunit": "5.7.*",
         "squizlabs/php_codesniffer": "*",
         "overtrue/phplint": "^1.0",
         "sensiolabs/security-checker": "*",
