@@ -34,7 +34,7 @@ abstract class SignalHandler
                 $signal = constant($signal);
             }
 
-            $existingHandlers[$signal] = pcntl_signal_get_handler(
+            $existingHandlers[$signal] = \pcntl_signal_get_handler(
                 $signal
             );
         }
@@ -63,7 +63,7 @@ abstract class SignalHandler
     public function disable()
     {
         foreach ($this->existingSignalHandlers as $signo => $handler) {
-            pcntl_signal($signo, $handler);
+            \pcntl_signal($signo, $handler);
         }
 
         $this->existingSignalHandlers = [];
