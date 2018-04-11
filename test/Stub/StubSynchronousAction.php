@@ -38,7 +38,7 @@ class StubSynchronousAction implements SynchronousAction
             $res = $res->withHeader($header, $value);
         }
 
-        return $res->withBody(\GuzzleHttp\Psr7\stream_for(
+        return $res->withBody(\RingCentral\Psr7\stream_for(
             $this->newBody
         ));
     }

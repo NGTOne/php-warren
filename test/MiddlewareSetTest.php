@@ -43,7 +43,7 @@ class MiddlewareSetTest extends TestCase
             [
                 [function ($req, $res, $next = null) {
                     return $res->withBody(
-                        \GuzzleHttp\Psr7\stream_for(
+                        \RingCentral\Psr7\stream_for(
                             "FOO".$req->getBody()."BAR"
                         )
                     );
@@ -53,14 +53,14 @@ class MiddlewareSetTest extends TestCase
                 [
                     function ($req, $res, $next = null) {
                         return $res->withBody(
-                            \GuzzleHttp\Psr7\stream_for(
+                            \RingCentral\Psr7\stream_for(
                                 "BAZ".$next($res, $req)->getBody()."QUX"
                             )
                         );
                     },
                     function ($req, $res, $next = null) {
                         return $res->withBody(
-                            \GuzzleHttp\Psr7\stream_for(
+                            \RingCentral\Psr7\stream_for(
                                 "FOO".$req->getBody()."BAR"
                             )
                         );
@@ -71,7 +71,7 @@ class MiddlewareSetTest extends TestCase
                 [
                     function ($req, $res, $next = null) {
                         return $res->withBody(
-                            \GuzzleHttp\Psr7\stream_for(
+                            \RingCentral\Psr7\stream_for(
                                 "ANOTHER".
                                     $next($res, $req)->getBody().
                                     "ONE"
@@ -80,14 +80,14 @@ class MiddlewareSetTest extends TestCase
                     },
                     function ($req, $res, $next = null) {
                         return $res->withBody(
-                            \GuzzleHttp\Psr7\stream_for(
+                            \RingCentral\Psr7\stream_for(
                                 "BAZ".$next($res, $req)->getBody()."QUX"
                             )
                         );
                     },
                     function ($req, $res, $next = null) {
                         return $res->withBody(
-                            \GuzzleHttp\Psr7\stream_for(
+                            \RingCentral\Psr7\stream_for(
                                 "FOO".$req->getBody()."BAR"
                             )
                         );

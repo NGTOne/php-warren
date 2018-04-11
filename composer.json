@@ -26,7 +26,7 @@
         "psr/http-message": "1.0.*",
         "php": ">=7.1.0",
         "ext-pcntl": "*",
-        "guzzlehttp/psr7": "1.4.*",
+        "ringcentral/psr7": "^1.2",
         "seld/signal-handler": "^1.0"
     },
     "require-dev": {

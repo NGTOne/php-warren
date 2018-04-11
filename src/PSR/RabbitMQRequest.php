@@ -2,7 +2,7 @@
 
 namespace Warren\PSR;
 
-use GuzzleHttp\Psr7\Request;
+use RingCentral\Psr7\Request;
 
 class RabbitMQRequest extends Request
 {

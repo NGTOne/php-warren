@@ -2,7 +2,7 @@
 
 namespace Warren\Test\MessageProcessor;
 
-use GuzzleHttp\Psr7;
+use RingCentral\Psr7;
 use PHPUnit\Framework\TestCase;
 use Warren\Test\Stub\StubAsynchronousAction;
 

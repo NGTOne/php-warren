@@ -86,7 +86,7 @@ class RabbitConsumerTest extends TestCase
             ], [
                 [function ($req, $res, $next) {
                     return $next($req, $res->withBody(
-                        \GuzzleHttp\Psr7\stream_for('f00b4r')
+                        \RingCentral\Psr7\stream_for('f00b4r')
                     ));
                 }],
                 ['action' => 'my_cool_action'],
@@ -99,7 +99,7 @@ class RabbitConsumerTest extends TestCase
                 [
                     function ($req, $res, $next) {
                         return $next($req, $res->withBody(
-                            \GuzzleHttp\Psr7\stream_for('f00b4r')
+                            \RingCentral\Psr7\stream_for('f00b4r')
                         ));
                     },
                     function ($req, $res, $next) {
@@ -207,7 +207,7 @@ class RabbitConsumerTest extends TestCase
             ], [
                 [function ($req, $res, $next) {
                     return $next($req, $res->withBody(
-                        \GuzzleHttp\Psr7\stream_for('f00b4r')
+                        \RingCentral\Psr7\stream_for('f00b4r')
                     ));
                 }],
                 ['action' => 'my_cool_action'],
@@ -220,7 +220,7 @@ class RabbitConsumerTest extends TestCase
                 [
                     function ($req, $res, $next) {
                         return $next($req, $res->withBody(
-                            \GuzzleHttp\Psr7\stream_for('f00b4r')
+                            \RingCentral\Psr7\stream_for('f00b4r')
                         ));
                     },
                     function ($req, $res, $next) {

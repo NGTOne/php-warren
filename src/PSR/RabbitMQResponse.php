@@ -2,7 +2,7 @@
 
 namespace Warren\PSR;
 
-use GuzzleHttp\Psr7\Response;
+use RingCentral\Psr7\Response;
 
 class RabbitMQResponse extends Response
 {
